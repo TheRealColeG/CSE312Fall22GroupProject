@@ -38,9 +38,9 @@ def sanitize(diseased):
 
 #Returns True if the username and password correspond to an entry on file
 def login(username, password):
-    #Pulls the entry at the 
+    #Pulls the entry with the username
     existing = list(privatePlayers.find({"username" : username}))
-    #If there is no such entry at that ID
+    #If there is no such entry at that username
     if existing == []:
         return False
     existing = sanitize(existing[0])
@@ -98,21 +98,57 @@ def newAccount(username, password):
 #Returns True if the account is deleted
 #Returns False if the account does not exist or if the credentials are incorrect
 def delAccount(username, password):
+    #If the username and password correspond to an acount
     if login(username, password):
         entry = list(privatePlayers.find({"username":username}))[0]
         #Permanently delete (no bullshit soft delete)
         privatePlayers.delete_one({"id" : entry["id"]})
         publicPlayers.delete_one({"id" : entry["id"]})
         return True
+    #If the username and password do not correspond to an account
     else:
         return False
 
 #Takes in a username of a person who just won a game, and their balance that they had for their win
 #This will update their public profile's win count and balance
-def win(username, balance):
+def winGame(username, balance):
+    #Pull the entry with the matching username
     entry = list(publicPlayers.find({"username" : username}))[0]
     entry = sanitize(entry)
+    #Update their winning balance with what they won with
     bal = entry["monies"] + balance
+    #Update the win count
     wins = entry["wins"] + 1
+    #Push both to the database
     publicPlayers.update_one({"id" : entry["id"]}, {"$set" : {"monies" : bal}}) 
     publicPlayers.update_one({"id" : entry["id"]}, {"$set" : {"wins" : wins}})
+
+#Pulls the public information for a username in the form of a dictionary with the details
+#Returns a -1 if no username exists
+def playerDetails(username):
+    entry = list(publicPlayers.find({"username" : username}))
+    if entry == []:
+        return -1
+    else: 
+        return sanitize(entry[0])
+
+#Changes the password (with a new salt)
+#Returns true if the username & password correspond to an account
+#Returns false if they do not
+def changePassword(username, password, newPassword):
+    #If the username and password correspond to an account
+    if login(username, password):
+        #Pull the entry for that username
+        entry = list(privatePlayers.find({"username" : username}))[0]
+        entry = sanitize(entry)
+        #Generate a new salt to go along with the new password
+        newSalt = salt()
+        #Update the file with the new salt
+        privatePlayers.update_one({"id" : entry["id"]}, {"$set" : {"salt" : newSalt}})
+        #Hash the password along with the new salt
+        newPassword = hash(newPassword+"Q"+newSalt)
+        #Change the password
+        privatePlayers.update_one({"id" : entry["id"]}, {"$set" : {"password" : newPassword}})
+        return True
+    else:
+        return False
