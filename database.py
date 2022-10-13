@@ -45,7 +45,7 @@ def login(username, password):
         return False
     existing = sanitize(existing[0])
     salt = existing["salt"]
-    hidden = hash(password+salt)
+    hidden = hash(password+"Q"+salt)
     if hidden == existing["password"]:
         return True
     else:
@@ -64,17 +64,17 @@ def salt():
 
 #If the username is available, it will create a new player character.
 #If not, it will return -1
-def newAccount(input):
+def newAccount(username, password):
     #The list of taken names
     copy = list(takenNames.find({}))[0]["names"]
     names = copy
     #If the username is already taken
-    if input["username"] in names:
+    if username in names:
         return -1
     #If the username is available
     else:
         #Add the name to the list of taken names (as it will be taken in the next few lines)
-        names.append(input["username"])
+        names.append(username)
         #Update the list of taken name
         takenNames.update_one({"list" : copy}, {"$set" : {"list" : names}})
 
@@ -84,10 +84,10 @@ def newAccount(input):
     mySalt = salt()
     #Creates an entry on the private side
     #["id", "username", "salt", "password"]
-    privatePlayers.insert_one({"id" : cur, "username": input["username"], "salt" : mySalt, "password" : hash(input["passsword"]+mySalt)})
+    privatePlayers.insert_one({"id" : cur, "username": username, "salt" : mySalt, "password" : hash(password + "Q" + mySalt)})
     #Creates an entry on the public side that anyone can access
     #["id", "username", "wins", "monies"]
-    publicPlayers.insert_one({"id":cur, "username" : input["username"], "wins" : 0, "monies" : 0})
+    publicPlayers.insert_one({"id":cur, "username" : username, "wins" : 0, "monies" : 0})
     #Pulls the newly created record to return from the database (has AIDS _id)
     player = list(publicPlayers.find({"id" : cur}))[0]
     #Updates the ID to the next value
