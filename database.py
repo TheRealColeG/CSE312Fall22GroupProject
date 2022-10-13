@@ -152,3 +152,38 @@ def changePassword(username, password, newPassword):
         return True
     else:
         return False
+
+#Returns a number 1-8 if there is a lobby available
+#Return -1 if all the games are full
+def findAvailableGame():
+    #Pull a snapshot of the current lobbies
+    lobbies = list(games.find({}))
+    #For every lobby see if it is available
+    for lobby in lobbies:
+        #Pull the keys (should be '1-8' or AIDS _id)
+        keys = lobby.keys()
+        for key in keys:
+            #If the lobby is available (0)
+            if key != "_id" and lobby[key] == 0:
+                #Return the number of that lobby available for play
+                return int(key)
+            else:
+                break
+    #If no lobby has a status of 0, return -1 to indicate all games are full.
+    return -1
+
+def initBoard():
+    #???
+    NotImplemented
+
+def movePiece():
+    #???
+    NotImplemented
+
+def buyProperty():
+    #???
+    NotImplemented
+
+def tradeProperty():
+    #???
+    NotImplemented
