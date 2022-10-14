@@ -3,6 +3,7 @@
 
 from flask import Flask, request, render_template
 from markupsafe import escape
+import database
 
 app = Flask(__name__)
 
@@ -15,13 +16,16 @@ def hello_world():
 @app.route('/user/<username>')
 def show_user_profile(username):
     # show the user profile for that user
-    return f'User {escape(username)}'
+    user = database.playerDetails(escape(username))
+    return user
 
 #Using GET and POST requests for same page
 @app.route('/users', methods=['GET', 'POST'])
 def login():
+    #Logging in
     if request.method == 'POST':
         return do_the_login()
+    #Pulling every profile
     else:
         return show_the_login_form()
 

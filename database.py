@@ -87,7 +87,7 @@ def newAccount(username, password):
     privatePlayers.insert_one({"id" : cur, "username": username, "salt" : mySalt, "password" : hash(password + "Q" + mySalt)})
     #Creates an entry on the public side that anyone can access
     #["id", "username", "wins", "monies"]
-    publicPlayers.insert_one({"id":cur, "username" : username, "wins" : 0, "monies" : 0})
+    publicPlayers.insert_one({"id" : cur, "username" : username, "wins" : 0, "monies" : 0})
     #Pulls the newly created record to return from the database (has AIDS _id)
     player = list(publicPlayers.find({"id" : cur}))[0]
     #Updates the ID to the next value

@@ -1,0 +1,17 @@
+Basic parts/pieces needed for a Monopoly game
+
+Basic rules, actions you can do per turn:
+Roll the dice, move the number of squares indicated, passing the start square would receive X amount of money.
+Buy properties, you may buy any property from the Bank that you land on if it is not already owned.
+Building, you may only build when you own all properties in a color group (OPTIONAL).
+Pay rent if you land on someone’s property (OPTIONAL).
+Parts/pieces needed:
+A representation of a dice.
+A number to represent money/points.
+An icon to determine an owned property.
+A house/hotel icon to represent a building (if decided to have building functionality).
+Wants:
+“Flip the fking table” button
+Emote button: press it will spawn a random emote
+Opportunity functionality
+Jail Functionality
