@@ -3,8 +3,8 @@ import csv
 class Property: 
 
 	#The method to initalize a Property object.
-	#Input: (name, baseCost, mortgagePrice, houseCost, (houseRent[0], houseRent[1], houseRent[2], houseRent[3], houseRent[4], houseRent[5]), propertyOwner, houseCount, occupying)
-	def __init__(self, title, cost, mortgage, house, rents, owner, houses, occupied):
+	#Input: (name, baseCost, mortgagePrice, houseCost, (houseRent[0], houseRent[1], houseRent[2], houseRent[3], houseRent[4], houseRent[5]), propertyOwner, houseCount, occupying, mortgageStatus)
+	def __init__(self, title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged):
 
 		#Property name. (String).
 		self.name = title 
@@ -22,6 +22,17 @@ class Property:
 		self.houseRent = rents
 		#A list of player usernames that are occupying the space at the current time.
 		self.occupying = occupied
+		#Whether or not the property is mortgaged.
+		self.mortgageStatus = mortgaged
+	
+	def playerEnter(self, player):
+		self.occupying = self.occupying.append(player)
+
+	def playerExit(self):
+		if self.occupying > 0:
+			self.occupying = self.occupying - 1
+		else:
+			print("Something fucked up.", flush=True)
 	
 	#Translates indices on the csv property details file to indices on the game board 1d array
 	#LITERALLY DONT WORRY ABOUT THIS
@@ -94,24 +105,24 @@ def initBoard():
 					index = translate(index)
 					#If there IS a next index, map the element to a newly created property object having the attributes in that csv file.
 					if index != 0:
-						ret_val[index] = Property(property[0], float(property[1]), float(property[2]), float(property[3]), (float(property[4]), float(property[5]), float(property[6]), float(property[7]), float(property[8]), float(property[9])), None, 0, 0)
+						ret_val[index] = Property(property[0], float(property[1]), float(property[2]), float(property[3]), (float(property[4]), float(property[5]), float(property[6]), float(property[7]), float(property[8]), float(property[9])), None, 0, 0, [])
 		#If the iteration is not supposed to be a property
 		elif i == 0 or i == 2 or i == 4 or i == 5 or i == 7 or i == 10 or i == 12 or i == 15 or i == 17 or i == 20 or i == 22 or i == 25 or i == 28 or i == 30 or i == 33 or i == 35 or i ==- 36 or i == 38:
 			#If the property is GO
 			if i == 0:
-				ret_val[i] = Property("GO", None, None, None, 0, 0, None, 0)
+				ret_val[i] = Property("GO", None, None, None, 0, 0, None, 0, None)
 			#If the property is the JAIL
 			elif i == 10:
-				ret_val[i] = Property("JAIL", None, None, None, 0, 0, None, 0)
+				ret_val[i] = Property("JAIL", None, None, None, 0, 0, None, 0, None)
 			#If the property is FREE PARKING
 			elif i == 20:
-				ret_val[i] = Property("FREE PARKING", None, None, None, 0, 0, None,0)
+				ret_val[i] = Property("FREE PARKING", None, None, None, 0, 0, None,0, None)
 			#If the POLICE have caught player
 			elif i == 30:
-				ret_val[i] = Property("ARREST", None, None, None, 0, 0, None, 0)
+				ret_val[i] = Property("ARREST", None, None, None, 0, 0, None, 0, None)
 			#If the piece is a blank slate
 			else:
-				ret_val[i] = Property("BLANK", None, None, None, 0, 0, None, 0)
+				ret_val[i] = Property("BLANK", None, None, None, 0, 0, None, 0, None)
 	#ret_val is now a starter monopoly board
 	return ret_val
 
@@ -124,9 +135,9 @@ class BoardGame:
 	def __init__(self, players):
 		#Starter Monopoly
 		self.board = initBoard()
-		#self.board.append(Property(“name”, 20, 2, 50, (5, 10, 15, 20)))
-		#self.board.append(Property(“name”, 20, 2, 50, (5, 10, 15, 20)))
-		#self.board.append(Property(“name”, 20, 2, 50, (5, 10, 15, 20)))
+		#Adds the players to the GO
+		for player in players:
+			self.board[0].playerEnter(player)
 
 
 #=> BroadGame.board = [Property(...,...,..), Property(...,...,..), Property(...,...,..), Property(...,...,..)]
