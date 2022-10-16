@@ -15,3 +15,15 @@ Wants:
 Emote button: press it will spawn a random emote
 Opportunity functionality
 Jail Functionality
+
+> dockerfile
+> docker-compose file
+> database touching the Pymongo DB for each component
+> server request handler
+> HTML files
+> CSS (maybe attached?)
+> JavaScript request handler
+> JavaScript sending gameboard to web page
+> python modifying the game objects
+> csv dump holding the property values (the only thing to be modified if we want to change the property attributes)
+> ??? displaying the game board
