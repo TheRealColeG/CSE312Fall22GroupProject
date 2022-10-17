@@ -17,7 +17,7 @@ class Player:
 		self.properties = []
 		self.location = 0
 	
-	def bankrupt(self):
+	def bankruptPlayer(self):
 		self.name = "DEBTOR JAIL INMATE"
 		self.money = -1
 		self.location = -1
@@ -62,6 +62,9 @@ class Property:
 			self.occupying.remove(player)
 		else:
 			print("Something fucked up.", flush=True)
+
+	def mortgage(self):
+		self.mortgage = not self.mortgage
 	
 
 #The game object is what is stored in the database. The games Collection will hold these objects
@@ -86,6 +89,10 @@ class Game:
 		self.bankrupted = []
 		#Sends the created Game object straight to the database to be implemented in the 'games' collection
 		database.setGame(lobby, self)
+		
+	def bankrupt(self, player):
+		player.bankruptPlayer()
+		self.bankrupted.append(player)
 
 
 
@@ -159,12 +166,13 @@ def initBoard():
 					index = translate(index)
 					#If there IS a next index, map the element to a newly created property object having the attributes in that csv file.
 					if index != 0:
-						ret_val[index] = Property(property[0], float(property[1]), float(property[2]), float(property[3]), (float(property[4]), float(property[5]), float(property[6]), float(property[7]), float(property[8]), float(property[9])), None, 0, 0, [])
+						#(self, title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
+						ret_val[index] = Property(property[0], float(property[1]), float(property[2]), float(property[3]), (float(property[4]), float(property[5]), float(property[6]), float(property[7]), float(property[8]), float(property[9])), None, 0, [], False)
 		#If the iteration is not supposed to be a property
 		elif i == 0 or i == 2 or i == 4 or i == 5 or i == 7 or i == 10 or i == 12 or i == 15 or i == 17 or i == 20 or i == 22 or i == 25 or i == 28 or i == 30 or i == 33 or i == 35 or i == 36 or i == 38:
 			#If the property is GO
 			if i == 0:
-				ret_val[i] = Property("GO", None, None, None, 0, 0, None, 0, None)
+				ret_val[i] = Property("GO", None, None, None, 0, None, None, 0, None)
 			#If the property is the JAIL
 			elif i == 10:
 				ret_val[i] = Property("JAIL", None, None, None, 0, 0, None, 0, None)
@@ -176,7 +184,7 @@ def initBoard():
 				ret_val[i] = Property("ARREST", None, None, None, 0, 0, None, 0, None)
 			#If the piece is a blank slate
 			else:
-				ret_val[i] = Property("BLANK", None, None, None, 0, 0, None, 0, None)
+				ret_val[i] = Property("BLANK", None, None, None, 0, 0, None, 0, None, None)
 	#ret_val is now a starter monopoly board
 	return ret_val
 
