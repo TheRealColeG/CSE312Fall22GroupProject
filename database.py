@@ -172,9 +172,28 @@ def findAvailableGame():
     #If no lobby has a status of 0, return -1 to indicate all games are full.
     return -1
 
-def initBoard():
-    #???
-    NotImplemented
+#Set an EMPTY game to a full game in the database.
+def setGame(lobby, game):
+    slot = list(games.find({str(lobby) : 0}))[0]
+    slot = sanitize(slot)
+    slot = slot[str(lobby)]
+    if slot == 0:
+        games.update_one({str(lobby) : 0}, {"$set" : {str(lobby) : game}})
+        return True
+    else:
+        return False
+
+#Reverts a game to being ended in the database
+def endGame(game):
+    allSlots = list(games.find({}))
+    for slot in allSlots:
+        keys = slot.keys()
+        for key in keys:
+            if key != "_id":
+                cur = slot[key]
+                if cur == game:
+                    number = key
+
 
 def movePiece():
     #???
