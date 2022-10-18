@@ -94,6 +94,10 @@ class Game:
 		player.bankruptPlayer()
 		self.bankrupted.append(player)
 
+	def move(self, player, roll):
+		currentBoard = self.board
+		
+
 
 
 #Translates indices on the csv property details file to indices on the game board 1D array
@@ -147,6 +151,7 @@ def translate(i):
 def initBoard():
 	#A 1D List is contained with each element being a Property. Index 0 points to Go, index 10 points to JAIL, index 20 points to FREE PARKING, index 30 point to ARREST.
 	ret_val = []
+
 	#Set the list to the appropriate size, (remove if we initialize a 40-slot Array beforehand).
 	for _ in range(40):
 		ret_val.append(0)
