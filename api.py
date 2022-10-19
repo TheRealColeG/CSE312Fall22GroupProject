@@ -1,5 +1,4 @@
 import csv
-from logging import exception
 import random
 import database
 
@@ -20,7 +19,7 @@ def initPlayer(username, orientation):
 
 #This kicks a player out of the game
 def bankruptPlayer(player):
-	#The uesrname of every bankrupted player is "INDEBTED INMATE"
+	#The username of every bankrupted player is "INDEBTED INMATE"
 	player["username"] = "INDEBTED INMATE"
 	#Their balance/location is set to none (you can use these to check to see if they are out of the game)
 	player["money"] = None

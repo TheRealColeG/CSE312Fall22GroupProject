@@ -174,3 +174,11 @@ def setGame(lobby, game):
 #Reverts a game to being ended in the database
 def endGame(lobby):
     games.update_one({"id" : lobby}, {"$set" : {"contents" : 0}})
+
+#Pulls the game dictionary from the lobby
+def pullGame(lobby):
+    game = list(games.find({"id" : lobby}))
+    game = sanitize(game[0])
+    game = game["contents"]
+    #Send this to the printer
+    return game
