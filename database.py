@@ -174,15 +174,3 @@ def setGame(lobby, game):
 #Reverts a game to being ended in the database
 def endGame(lobby):
     games.update_one({"id" : lobby}, {"$set" : {"contents" : 0}})
-
-def movePiece():
-    #???
-    NotImplemented
-
-def buyProperty():
-    #???
-    NotImplemented
-
-def tradeProperty():
-    #???
-    NotImplemented

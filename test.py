@@ -29,9 +29,3 @@ def diceRoll():
 	firstRoll = int(random.choice(support))
 	secondRoll = int(random.choice(support))
 	return (firstRoll, secondRoll)
-
-arr = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-print(arr)
-arr[10] = "9"
-print(arr)
-print("Length: "+str(len(arr)))

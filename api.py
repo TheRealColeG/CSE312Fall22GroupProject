@@ -95,9 +95,15 @@ def initGame(usernames, lobby):
 	game["bankrupted"] = []
 	#Sends the created Game object straight to the database to be implemented in the 'games' collection
 	database.setGame(lobby, game)
+	#???
+
+def passGo(player):
+	player["money"] = player["money"] + 200.00
+	return player
 
 #Called on a GAME to bankrupt the username
 def bankrupt(game, player):
+	#Pulls the username to examine
 	playerUsername = player["username"]
 	i = 0
 	for playerDictionary in game["players"]:
@@ -109,7 +115,25 @@ def bankrupt(game, player):
 
 #Input is a game dictionary, player dictionary and roll (int)
 def move(game, player, roll):
-	currentBoard = self.board
+	currentBoard = game["board"]
+	currentLocation = player["location"]
+	newLocation = currentLocation + roll
+	#If the player passed GO
+	if newLocation > 39:
+		overflow = newLocation - 39
+		newLocation = overflow
+		#Give 'em $200
+		player = passGo(player)
+	#The property dictionary that the player has landed on
+	lodging = currentBoard[newLocation]
+	#If the property is a buyable asset
+	if lodging["baseCost"] != None:
+		1
+	#If the property is a blank slate
+	else:
+		if lodging["name"] == "BLANK" or lodging["name"] == "GO" or lodging["name"] == "FREE PARKING" or lodging["name"] == "JAIL":
+			#Update the location and pass the turn
+			1
 		
 
 
