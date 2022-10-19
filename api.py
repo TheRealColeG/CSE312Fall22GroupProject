@@ -18,7 +18,7 @@ def bankruptPlayer(player):
 	player["money"] = None
 	player["location"] = None
 	return player
-ajopisjdehptioasdet
+
 def initProperty(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged):
 	property = {}
 	property["name"] = title
