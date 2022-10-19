@@ -22,7 +22,7 @@ if "names" not in db.list_collection_names():
 
 #If no games are in progress, set the lobbies to 0 (nothing)
 if "games" not in db.list_collection_names():
-    games.insert_many({"1" : 0}, {"2" : 0}, {"3" : 0}, {"4" : 0}, {"5" : 0}, {"6" : 0}, {"7" : 0}, {"8" : 0})
+    games.insert_many({"id" : 1, "contents" : 0}, {"id" : 2, "contents" : 0}, {"id" : 3, "contents" : 0}, {"id" : 4, "contents" : 0}, {"id" : 5, "contents" : 0}, {"id" : 6, "contents" : 0}, {"id" : 7, "contents" : 0}, {"id" : 8, "contents" : 0})
 
 #If no entries have been created yet, set the first available ID to 0
 if "identification" not in db.list_collection_names():
@@ -161,39 +161,19 @@ def findAvailableGame():
     #For every lobby see if it is available
     for lobby in lobbies:
         #Pull the keys (should be '1-8' or AIDS _id)
-        keys = lobby.keys()
-        for key in keys:
-            #If the lobby is available (0)
-            if key != "_id" and lobby[key] == 0:
-                #Return the number of that lobby available for play
-                return int(key)
-            else:
-                break
-    #If no lobby has a status of 0, return -1 to indicate all games are full.
+        lobby = sanitize(lobby)
+        if lobby["contents"] == 0:
+            return lobby["id"]
+    #If no lobby has a "contents" of 0, return -1 to indicate all games are full.
     return -1
 
-#Set an EMPTY game to a full game in the database.
+#Change the value a lobby's game contents to the updated content/game
 def setGame(lobby, game):
-    slot = list(games.find({str(lobby) : 0}))[0]
-    slot = sanitize(slot)
-    slot = slot[str(lobby)]
-    if slot == 0:
-        games.update_one({str(lobby) : 0}, {"$set" : {str(lobby) : game}})
-        return True
-    else:
-        return False
+    games.update_one({"id" : lobby}, {"$set" : {"contents" : game}})
 
 #Reverts a game to being ended in the database
-def endGame(game):
-    allSlots = list(games.find({}))
-    for slot in allSlots:
-        keys = slot.keys()
-        for key in keys:
-            if key != "_id":
-                cur = slot[key]
-                if cur == game:
-                    number = key
-
+def endGame(lobby):
+    games.update_one({"id" : lobby}, {"$set" : {"contents" : 0}})
 
 def movePiece():
     #???

@@ -1,24 +1,33 @@
 import csv
+from logging import exception
 import random
 import database
 
-#This initializes a player dictionary
-#Each game has a list of Player objects and a Board objects which is a list of Properties
+#This initializes a player dictionary (object)
 def initPlayer(username, orientation):
 	player = {}
+	#The username (str) will be whatever is passed into it
 	player["username"] = username
+	#The player's orientation in the game (1-4)
 	player["order"] = orientation
+	#Their balance #???
 	player["money"] = 0.0
+	#The list of owned properties
 	player["properties"] = []
+	#The index of the location where they reside in the board
 	player["location"] = 0
 	return player
 
+#This kicks a player out of the game
 def bankruptPlayer(player):
+	#The uesrname of every bankrupted player is "INDEBTED INMATE"
 	player["username"] = "INDEBTED INMATE"
+	#Their balance/location is set to none (you can use these to check to see if they are out of the game)
 	player["money"] = None
 	player["location"] = None
 	return player
 
+#Initializes the property based on what is passed
 def initProperty(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged):
 	property = {}
 	property["name"] = title
@@ -30,59 +39,77 @@ def initProperty(title, cost, mortgage, house, rents, owner, houses, occupied, m
 	property["mortgageStatus"] = mortgaged
 	property["currentOwner"] = owner
 	property["houseCount"] = houses
+	return property
 
+#Changes the ownership of the property when it is bought
 def buyProperty(property, player):
-	#self.propertyOwner = player.name
+	#Changes the current owner to the player who was passed
+	property["currentOwner"] = player["username"]
 	#Just in case the property is bought while mortgaged or with houses
-	#self.mortgageStatus = False
-	#self.houseCount = 0
-	NotImplemented
+	property["mortgageStatus"] = False
+	property["houseCount"] = 0
+	return property
 
+#Changes the occupying number of peole when a player is sitting on the property
 def playerEnterProperty(property, player):
 	if player["username"] not in property["occupying"]:
 		property["occupying"] = property["occupying"].append(player["username"])
+		return property
+	#If a mistake was made
 	else:
 		print("FUCKUP!!! playerEnterProperty() was ran on a property already containing that player!", flush=True)
+		return -1
 
+#When a player leaves a property update the player count
 def playerExitProperty(property, player):
 	if player["username"] in property["occupying"]:
 		property["occupying"] = property["occupying"].remove(player["username"])
+		return property
+	#If a mistake was made
 	else:
 		print("FUCKUP!!! playerExitProperty() was ran on a property not containing that player!", flush=True)
+		return -1
 
+#Reverses the mortgage status of a property when called
 def mortgageProperty(property):
 	property["mortgageStatus"] = not property["mortgageStatus"]
+	return property
 	
 
-#The game object is what is stored in the database. The games Collection will hold these objects
-class Game:
-	def __init__(self, usernames, lobby):
-		#Initializes the monopoly board.
-		self.board = initBoard()
-		#This will be a list of player objects in the order of their gameplay.
-		self.players = []
-		i = 0
-		#For every username in the list, add the player objects
-		for username in usernames:
-			#Create a new player object (with the order (1-4) being the order of the game).
-			player = Player(username, i+1)
-			self.players.append(player)
-			i = i + 1
-		#Adds the players to the GO space.
-		for player in self.players:
-			self.board[0].playerEnter(player)
+def initGame(usernames, lobby):
+	game = {}
+	#Initializes the monopoly board
+	game["board"] = initBoard()
+	#This will be a list of player objects in the order of their gameplay.
+	players = []
+	i = 0
+	#For every username in the list, create and add the player objects
+	for username in usernames:
+		players.append(initPlayer(username, i+1))
+		i = i + 1
+	game["players"] = players
+	#Adds the players to the GO space.
+	for player in players:
+		game["board"][0] = playerEnterProperty(game["board"][0], player)
+	#A list of player dictionaries that have been kicked out of the game due to bankruptcy (No one because everybody starts with money).
+	game["bankrupted"] = []
+	#Sends the created Game object straight to the database to be implemented in the 'games' collection
+	database.setGame(lobby, game)
 
-		#A list of player objects that have been kicked out of the game due to bankruptcy (No one because everybody starts with money).
-		self.bankrupted = []
-		#Sends the created Game object straight to the database to be implemented in the 'games' collection
-		database.setGame(lobby, self)
-		
-	def bankrupt(self, player):
-		player.bankruptPlayer()
-		self.bankrupted.append(player)
+#Called on a GAME to bankrupt the username
+def bankrupt(game, player):
+	playerUsername = player["username"]
+	i = 0
+	for playerDictionary in game["players"]:
+		if playerDictionary["username"] == playerUsername:
+			game["players"][i] = bankruptPlayer(playerDictionary)
+			game["bankrupted"] = game["bankrupted"].append(playerDictionary)
+			break
+		i = i + 1
 
-	def move(self, player, roll):
-		currentBoard = self.board
+#Input is a game dictionary, player dictionary and roll (int)
+def move(game, player, roll):
+	currentBoard = self.board
 		
 
 
@@ -158,24 +185,29 @@ def initBoard():
 					index = translate(index)
 					#If there IS a next index, map the element to a newly created property object having the attributes in that csv file.
 					if index != 0:
-						#(self, title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
+						#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
 						ret_val[index] = initProperty(property[0], float(property[1]), float(property[2]), float(property[3]), (float(property[4]), float(property[5]), float(property[6]), float(property[7]), float(property[8]), float(property[9])), None, 0, [], False)
 		#If the iteration is not supposed to be a property
 		elif i == 0 or i == 2 or i == 4 or i == 5 or i == 7 or i == 10 or i == 12 or i == 15 or i == 17 or i == 20 or i == 22 or i == 25 or i == 28 or i == 30 or i == 33 or i == 35 or i == 36 or i == 38:
 			#If the property is GO
 			if i == 0:
+				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
 				ret_val[i] = initProperty("GO", None, None, None, 0, None, None, 0, None)
 			#If the property is the JAIL
 			elif i == 10:
+				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
 				ret_val[i] = initProperty("JAIL", None, None, None, 0, 0, None, 0, None)
 			#If the property is FREE PARKING
 			elif i == 20:
+				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
 				ret_val[i] = initProperty("FREE PARKING", None, None, None, 0, 0, None, 0, None)
 			#If the POLICE have caught player
 			elif i == 30:
+				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
 				ret_val[i] = initProperty("ARREST", None, None, None, 0, 0, None, 0, None)
 			#If the piece is a blank slate
 			else:
+				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
 				ret_val[i] = initProperty("BLANK", None, None, None, 0, 0, None, 0, None, None)
 	#ret_val is now a starter monopoly board
 	return ret_val
