@@ -25,8 +25,5 @@ ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait
 RUN chmod +x /wait
 
 # command for running the application in container
-CMD python3 server.py
+CMD /wait && python3 server.py
 
-# replace line 28 with:
-# ENTRYPOINT ["python3"]
-# CMD["server.py"]
