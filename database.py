@@ -36,6 +36,11 @@ def sanitize(diseased):
             cured[key] = diseased[key]
     return cured
 
+#Write the HTML of the player's info taking in the statistics and forming the HTML from it.
+#This can be done wayyyy down the road.
+def writeAccountHTML(username, wins, monies):
+    NotImplemented
+
 #Returns True if the username and password correspond to an entry on file
 def login(username, password):
     #Pulls the entry with the username
