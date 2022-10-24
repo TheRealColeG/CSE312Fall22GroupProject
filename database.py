@@ -15,6 +15,9 @@ publicPlayers = db["players"]
 privatePlayers = db["information"]
 #Taken Usernames
 takenNames = db["names"]
+#List of XSRF tokens that have ever been generated in the server. (64 bytes each). Don't let this become too large a file if lots of people use the website
+validTokens = db["tokens"]
+#Keeps track of the most current TOKEN id (starting at 0)
 
 #If there are no accounts created
 if "names" not in db.list_collection_names():
@@ -52,10 +55,10 @@ def login(username, password):
         return False
 
 #Returns a randomized salt (16 chars)
-def salt():
+def salt(i):
     fullList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     chars = []
-    for _ in range(16):
+    for _ in range(i):
         chars.append(random.choice(fullList))
     salt = ""
     for char in chars:
@@ -81,7 +84,7 @@ def newAccount(username, password):
     #Pulls the next available ID number
     cur = list(ids.find({}))[0]["current"]
     #Generates a random salt to be applied to the player's profile
-    mySalt = salt()
+    mySalt = salt(16)
     #Creates an entry on the private side
     #["id", "username", "salt", "password"]
     privatePlayers.insert_one({"id" : cur, "username": username, "salt" : mySalt, "password" : hash(password + "Q" + mySalt)})
@@ -142,7 +145,7 @@ def changePassword(username, password, newPassword):
         entry = list(privatePlayers.find({"username" : username}))[0]
         entry = sanitize(entry)
         #Generate a new salt to go along with the new password
-        newSalt = salt()
+        newSalt = salt(16)
         #Update the file with the new salt
         privatePlayers.update_one({"id" : entry["id"]}, {"$set" : {"salt" : newSalt}})
         #Hash the password along with the new salt
@@ -182,3 +185,37 @@ def pullGame(lobby):
     game = game["contents"]
     #Send this to the printer
     return game
+
+#This creates and serves a brand new XSRF token for a player with the account ID: The ID of a player database entry assigned to their account's authentication token.
+#Not at all stored on their player entries.
+def serveToken(tokenID):
+    #The token that will be assigned to the player's served HTML file and 
+    token = salt(64)
+    #Inserts the just created token into the validToken database with its corresponding token identification number (to be passed in through a hashed digit).
+    validTokens.insert_one({"id" : hash(tokenID), "token" : hash(token)})
+    #Returns the string of the newly created token to be sent to the HTML
+    return token
+
+#Returns a True if the token is authenticated, a False if it is not.
+def authToken(id, token):
+    retrieveToken = list(validTokens.find({"id" : hash(id)}))
+    #If there is not existing token by that id:
+    if retrieveToken == []:
+        #Return false as the authentication failed.
+        return False
+    #Retrieve the actual token (string)
+    retrieveToken = sanitize(retrieveToken[0])["token"]
+    #If the hashed token matches the hash on file:
+    if retrieveToken == hash(token):
+        #Return true as the authentication was successful
+        return True
+    #Otherwise return false as the authentication failed
+    return False
+
+#Return True if the token was deleted, return False otherwise
+def delToken(id, token):
+    #If the ID and the token match:
+    if not authToken(id, token):
+        return False
+    validTokens.delete_one({"id" : hash(id)})
+    return True
