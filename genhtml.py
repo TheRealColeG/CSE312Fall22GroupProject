@@ -1,7 +1,6 @@
-# This will be an API for the account buttons. Will likely create strings out of requests and interpret method returns from database.py.
-# This should get right down to the point and mostly be changing formats and interpreting results. This file should take no less/more than a few hours to complete.
-# Would be a good week-long assignment. Both ends of this connector should be implemented.
-# Do this after most of the front end is done.
+#Something to execute HTML templating. May be replaced/better utilized by WebSockets
+#Develop this if you have a lot of time for blank mindedly coding (slightly elementary and artistic)
+
 
 #Write the HTML of the player's info taking in the statistics and forming the HTML from it.
 #This can be done wayyyy down the road.
