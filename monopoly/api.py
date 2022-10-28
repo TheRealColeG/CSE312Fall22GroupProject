@@ -73,7 +73,6 @@ def playerExitProperty(property, player):
 def mortgageProperty(property):
 	property["mortgageStatus"] = not property["mortgageStatus"]
 	return property
-	
 
 def initGame(usernames, lobby):
 	game = {}
@@ -119,7 +118,7 @@ def move(game, player, roll):
 	newLocation = currentLocation + roll
 	#If the player passed GO
 	if newLocation > 39:
-		overflow = newLocation - 39
+		overflow = newLocation - 40
 		newLocation = overflow
 		#Give 'em $200
 		player = passGo(player)
@@ -127,12 +126,14 @@ def move(game, player, roll):
 	lodging = currentBoard[newLocation]
 	#If the property is a buyable asset
 	if lodging["baseCost"] != None:
-		1
+		NotImplemented
 	#If the property is a blank slate
 	else:
 		if lodging["name"] == "BLANK" or lodging["name"] == "GO" or lodging["name"] == "FREE PARKING" or lodging["name"] == "JAIL":
 			#Update the location and pass the turn
-			1
+			NotImplemented
+		else:
+			raise Exception("!!! PROPERTY ISSUE !!!")
 		
 
 
