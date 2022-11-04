@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import random
 import time
 
-class GridEnvironment(gym.Env):
+class BoardEnvironment(gym.Env):
     
     def __init__(self):
         self.observation_space = spaces.Discrete(121)
