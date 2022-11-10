@@ -21,18 +21,28 @@ def show_user_profile(username):
 
 #Using GET and POST requests for same page
 @app.route('/users', methods=['GET', 'POST'])
-def login():
+def lookup():
     #Logging in
     if request.method == 'POST':
         return do_the_login()
     #Pulling every profile
     else:
-        return render_template("loginpage.html")
+        return show_the_login_form()
 
 #can also do this using .post() and .get()
-@app.get('/login')
-def login_get():
-    return render_template("loginpage.html")
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template("loginpage.html")
+    else:
+        ###PARSE the username and password
+        username = 0
+        password = 0
+        if database.authAccount(username, password):
+            print("yay you logged in!")
+        else:
+            print("Sorry, invalid details.")
+        NotImplemented
 
 @app.post('/login')
 def login_post():

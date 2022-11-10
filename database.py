@@ -40,7 +40,7 @@ def sanitize(diseased):
     return cured
 
 #Returns True if the username and password correspond to an entry on file
-def login(username, password):
+def authAccount(username, password):
     #Pulls the entry with the username
     existing = list(privatePlayers.find({"username" : username}))
     #If there is no such entry at that username
@@ -102,7 +102,7 @@ def newAccount(username, password):
 #Returns False if the account does not exist or if the credentials are incorrect
 def delAccount(username, password):
     #If the username and password correspond to an acount
-    if login(username, password):
+    if authAccount(username, password):
         entry = list(privatePlayers.find({"username":username}))[0]
         #Permanently delete (no bullshit soft delete)
         privatePlayers.delete_one({"id" : entry["id"]})
@@ -140,7 +140,7 @@ def playerDetails(username):
 #Returns false if they do not
 def changePassword(username, password, newPassword):
     #If the username and password correspond to an account
-    if login(username, password):
+    if authAccount(username, password):
         #Pull the entry for that username
         entry = list(privatePlayers.find({"username" : username}))[0]
         entry = sanitize(entry)
