@@ -25,3 +25,12 @@ class BoardEnvironment(gym.Env):
     def render(self):
         plt.imshow(self.state)
         plt.show()
+
+
+
+#TA NOTES: 
+#Modify the HTML to "generate" the proper image
+
+#Need to generate a new image => host it => 
+
+# Recommendation: go w/ htmlm front end, update as we go ahead
