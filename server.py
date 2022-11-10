@@ -10,7 +10,7 @@ app = Flask(__name__)
 #Default HTML
 @app.route("/")
 def hello_world():
-    return render_template("index.html")
+    return render_template("homepage.html")
 
 #Example of escaping user input - no injection
 @app.route('/user/<username>')
@@ -27,12 +27,12 @@ def login():
         return do_the_login()
     #Pulling every profile
     else:
-        return show_the_login_form()
+        return render_template("loginpage.html")
 
 #can also do this using .post() and .get()
 @app.get('/login')
 def login_get():
-    return show_the_login_form()
+    return render_template("loginpage.html")
 
 @app.post('/login')
 def login_post():
