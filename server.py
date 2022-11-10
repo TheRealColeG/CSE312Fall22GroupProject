@@ -44,10 +44,6 @@ def login():
             print("Sorry, invalid details.")
         NotImplemented
 
-@app.post('/login')
-def login_post():
-    return do_the_login()
-
 #DON'T CHANGE THIS!
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)
