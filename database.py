@@ -25,7 +25,14 @@ if "names" not in db.list_collection_names():
 
 #If no games are in progress, set the lobbies to 0 (nothing)
 if "games" not in db.list_collection_names():
-    games.insert_many({"id" : 1, "contents" : 0}, {"id" : 2, "contents" : 0}, {"id" : 3, "contents" : 0}, {"id" : 4, "contents" : 0}, {"id" : 5, "contents" : 0}, {"id" : 6, "contents" : 0}, {"id" : 7, "contents" : 0}, {"id" : 8, "contents" : 0})
+    games.insert_one({"id" : 1, "contents" : 0})
+    games.insert_one({"id" : 2, "contents" : 0})
+    games.insert_one({"id" : 3, "contents" : 0})
+    games.insert_one({"id" : 4, "contents" : 0})
+    games.insert_one({"id" : 5, "contents" : 0})
+    games.insert_one({"id" : 6, "contents" : 0})
+    games.insert_one({"id" : 7, "contents" : 0})
+    games.insert_one({"id" : 8, "contents" : 0})
 
 #If no entries have been created yet, set the first available ID to 0
 if "identification" not in db.list_collection_names():
