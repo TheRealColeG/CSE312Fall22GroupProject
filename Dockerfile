@@ -2,9 +2,9 @@
 FROM python:3.8
 
 # set the environment variable (HOME) to the value (/root)
-ENV HOME=/root
+ENV HOME /root
 # set the working directory
-WORKDIR ${HOME}
+WORKDIR /root
 
 #copy all files or directories to the image
 COPY . .
@@ -25,5 +25,5 @@ ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait
 RUN chmod +x /wait
 
 # command for running the application in container
-CMD /wait && python3 server.py
+CMD /wait && python3 -u server.py
 
