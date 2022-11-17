@@ -135,8 +135,9 @@ def move(game, player, roll):
 		else:
 			raise Exception("!!! PROPERTY ISSUE !!!")
 		
-
-
+def rent(game, player, property):
+	currentBoard = game["board"]
+	currentLocation = player["location"]
 
 #Translates indices on the csv property details file to indices on the game board 1D array
 #LITERALLY DONT WORRY ABOUT THIS

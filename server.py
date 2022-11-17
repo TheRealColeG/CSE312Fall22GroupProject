@@ -44,6 +44,15 @@ def login():
             print("Sorry, invalid details.")
         NotImplemented
 
+#For use for authentication+player move in the game
+@app.route('/gameplay', methods=['POST'])
+def move():
+    if request.method == 'POST':
+        with app.test_request_context('/gameplay', 'POST'):
+            assert request.path == '/gameplay'
+    else:
+        raise Exception("Bad Request Method!")
+
 #DON'T CHANGE THIS!
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)
