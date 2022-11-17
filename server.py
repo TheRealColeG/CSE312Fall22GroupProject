@@ -34,10 +34,13 @@ def lookup():
 def login():
     if request.method == 'GET':
         return render_template("loginpage.html")
-    else:
+    else: # POST method
         ###PARSE the username and password
-        username = 0
-        password = 0
+        print(request.headers)
+        username = request.headers.get('Username')
+        password = request.headers.get('Password')
+        # print("Username: " + username)
+        # print("Password: " + password)
         if database.authAccount(username, password):
             print("yay you logged in!")
         else:
