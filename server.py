@@ -53,14 +53,15 @@ def login():
         else:
             print("Login failure!")
             return render_template("loginpage.html")
-        NotImplemented
 
 #
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    print(request.headers, flush=True)
     if request.method == 'GET':
         return render_template("registerpage.html")
     else:
+
         username = request.headers.get('Username')
         password = request.headers.get('Password')
         createdAccount = database.newAccount(username, password)

@@ -1,5 +1,6 @@
 import random
 from pymongo import MongoClient
+import hashlib
 
 #This will initialize (if not already) a MongoClient, a database and several collections.
 client = MongoClient("mongo", 27017)
@@ -21,7 +22,7 @@ validTokens = db["tokens"]
 
 #If there are no accounts created
 if "names" not in db.list_collection_names():
-    takenNames.insert_one({"list" : []})
+    takenNames.insert_one({"names" : []})
 
 #If no games are in progress, set the lobbies to 0 (nothing)
 if "games" not in db.list_collection_names():
@@ -55,7 +56,7 @@ def authAccount(username, password):
         return False
     existing = sanitize(existing[0])
     salt = existing["salt"]
-    hidden = hash(password+"Q"+salt)
+    hidden = hashlib.sha256((password+salt).encode()).hexdigest
     if hidden == existing["password"]:
         return True
     else:
@@ -86,7 +87,7 @@ def newAccount(username, password):
         #Add the name to the list of taken names (as it will be taken in the next few lines)
         names.append(username)
         #Update the list of taken name
-        takenNames.update_one({"list" : copy}, {"$set" : {"list" : names}})
+        takenNames.update_one({"names" : copy}, {"$set" : {"names" : names}})
 
     #Pulls the next available ID number
     cur = list(ids.find({}))[0]["current"]
@@ -94,7 +95,7 @@ def newAccount(username, password):
     mySalt = salt(16)
     #Creates an entry on the private side
     #["id", "username", "salt", "password"]
-    privatePlayers.insert_one({"id" : cur, "username": username, "salt" : mySalt, "password" : hash(password + "Q" + mySalt)})
+    privatePlayers.insert_one({"id" : cur, "username": username, "salt" : mySalt, "password" : hashlib.sha256((password + mySalt).encode('utf-8')).hexdigest})
     #Creates an entry on the public side that anyone can access
     #["id", "username", "wins", "monies"]
     publicPlayers.insert_one({"id" : cur, "username" : username, "wins" : 0, "monies" : 0})
