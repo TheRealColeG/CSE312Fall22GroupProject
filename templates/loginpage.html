@@ -80,11 +80,16 @@
           <div class="login form">
             <p>My login form will be here:</p>
             <br>
-            <form method="post">
-              <p>Username:   <input type=text name=username>
-              <p>Password:   <input type=text name=password>
-              <p><input type=submit value=Login>
+            <br>
+            <form action="/login" id="login-form" method="post" enctype="multipart/form-data">
+              <label for="for-username">Username: </label>
+              <input id="for-username" type="text" name="username">
+              <br/>
+              <label for="for-password">Password: </label>
+              <input id="for-password" type="password" name="password">
+              <input type="submit" value="Submit">
             </form>
+            <br>
           </div>
         </div>
       </div> 
