@@ -47,17 +47,26 @@ def login():
         print(request.headers)
         username = request.headers.get('Username')
         password = request.headers.get('Password')
-        # print("Username: " + username)
-        # print("Password: " + password)
         if database.authAccount(username, password):
-            print("yay you logged in!")
+            print("Login Successful!")
+            return render_template("homepage.html")
         else:
-            print("Sorry, invalid details.")
+            print("Login failure!")
+            return render_template("loginpage.html")
         NotImplemented
 
+#
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        return render_template("registerpage.html")
+    else:
+        username = request.headers.get('Username')
+        password = request.headers.get('Password')
+        createdAccount = database.newAccount(username, password)
+        return render_template("loginpage.html")
+
 # For use for authentication+player move in the game
-
-
 @app.route('/gameplay', methods=['POST'])
 def move():
     if request.method == 'POST':
