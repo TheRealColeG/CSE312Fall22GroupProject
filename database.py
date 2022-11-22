@@ -295,3 +295,81 @@ def rankByCash(username):
             return i+1
     #This should never run because userProfile is in allProfiles. If it does, raise an exception.
     raise Exception("database error!")
+
+def pullWinsLeaderboard():
+    #Pull and sanitize every public profile
+    allProfiles = process(list(publicPlayers.find({}))) 
+    #If there are no profiles, return -1 as an error indicator
+    if allProfiles == []:
+        return -1
+    #Initialize a dict that will pair a win number to a LIST of INDICES of players that have that (key) win count
+    ranking = {}
+    #For every profile index in all profiles
+    for i in range(len(allProfiles)):
+        #Pull the actual profile
+        profile = allProfiles[i]
+        #If that profile's win count is already in the ranking
+        if profile["wins"] in list(ranking.keys()):
+            #Append the index of the profile to the list of profiles that have the (key) win count
+            ranking[profile["wins"]] = ranking[profile["wins"]].append(i)
+        #If we are ranking the first profile with that win count (win count is unique so far)
+        else:
+            #Initialize the list to be solely that index
+            ranking[profile["wins"]] = [i]
+    #winCounts should be a LIST of all noticed scores
+    winCounts = list(ranking.keys())
+    #Sort the list of scores in reverse order so that the greatest win count is at index 0 (if a greatest win count exists)
+    winCounts.sort()
+    winCounts.reverse()
+    #Initialize the leaderboard which will be an ordered list of usernames
+    leaderboard = []
+    #For every win score
+    for key in winCounts:
+        #Pull the list of indices in the allProfiles list of dicts that have that score
+        valList = ranking[key]
+        #For every index of a user with that score
+        for index in valList:
+            #Append the username into the leaderboard (tied scores should have random-ish order)
+            curProfile = allProfiles[index]
+            leaderboard.append(curProfile["username"])
+    #Return the ordered list
+    return leaderboard
+
+def pullBalLeaderboard():
+    #Pull and sanitize every public profile
+    allProfiles = process(list(publicPlayers.find({}))) 
+    #If there are no profiles, return -1 as an error indicator
+    if allProfiles == []:
+        return -1
+    #Initialize a dict that will pair a win number to a LIST of INDICES of players that have that (key) balance
+    ranking = {}
+    #For every profile index in all profiles
+    for i in range(len(allProfiles)):
+        #Pull the actual profile
+        profile = allProfiles[i]
+        #If that profile's balance is already in the ranking
+        if profile["monies"] in list(ranking.keys()):
+            #Append the index of the profile to the list of profiles that have the (key) balance
+            ranking[profile["monies"]] = ranking[profile["monies"]].append(i)
+        #If we are ranking the first profile with that balance (the balance is unique so far)
+        else:
+            #Initialize the list to be solely that index
+            ranking[profile["monies"]] = [i]
+    #balances should be a LIST of all noticed scores
+    balances = list(ranking.keys())
+    #Sort the list of balances in reverse order so that the greatest balance is at index 0 (if a greatest balance exists)
+    balances.sort()
+    balances.reverse()
+    #Initialize the leaderboard which will be an ordered list of usernames
+    leaderboard = []
+    #For every balance
+    for key in balances:
+        #Pull the list of indices in the allProfiles list of dicts that have that balance
+        valList = ranking[key]
+        #For every index of a user with that balance
+        for index in valList:
+            #Append the username into the leaderboard (tied balance should have random-ish order)
+            curProfile = allProfiles[index]
+            leaderboard.append(curProfile["username"])
+    #Return the ordered list
+    return leaderboard
