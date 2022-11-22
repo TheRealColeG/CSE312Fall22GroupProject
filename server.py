@@ -1,9 +1,10 @@
 # Much of the following is copied from the documentation on Flask's website:
 #   https://flask.palletsprojects.com/en/2.2.x/quickstart/
 
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, render_template_string
 from markupsafe import escape
 import database
+import templator
 
 app = Flask(__name__)
 
@@ -16,12 +17,24 @@ def hello_world():
 
 # Example of escaping user input - no injection
 
+#This doesn't work.
+@app.route("/change-password", methods=['POST'])
+def change_password():
+    #Authenticate
+    username = request.headers.get('Username')
+    password = request.headers.get('Password')
+    newPassword = request.headers.get('new-password')
+    truth = database.changePassword(username, password, newPassword)
+    if truth:
+        return "Successful!"
+    else:
+        return "Failure!"
 
 @app.route('/user/<username>')
 def show_user_profile(username):
     # show the user profile for that user
-    user = database.playerDetails(escape(username))
-    return user
+    username = escape(username)
+    return render_template_string(templator.servePublicUserProfileHTML(username))
 
 # Using GET and POST requests for same page
 
@@ -30,10 +43,10 @@ def show_user_profile(username):
 def lookup():
     # Logging in
     if request.method == 'POST':
-        return do_the_login()
+        return NotImplemented
     # Pulling every profile
     else:
-        return show_the_login_form()
+        return NotImplemented
 
 # can also do this using .post() and .get()
 

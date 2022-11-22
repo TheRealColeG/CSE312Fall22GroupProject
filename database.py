@@ -39,10 +39,13 @@ if "games" not in db.list_collection_names():
 if "identification" not in db.list_collection_names():
     ids.insert_one({"current" : 0})
 
+#Sanitizes a LIST of dictionaries, removing the aids mongo _id from everything
 def process(diseaseBoat):
+    #If there ain't shit to process, return nothing
     if diseaseBoat == []:
         return []
     else:
+        #Return a list of sanitized dictionaries
         cleanShip = []
         for diseased in diseaseBoat:
             clean = sanitize(diseased)
