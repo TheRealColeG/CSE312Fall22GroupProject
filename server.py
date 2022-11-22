@@ -61,9 +61,8 @@ def register():
     if request.method == 'GET':
         return render_template("registerpage.html")
     else:
-
-        username = request.headers.get('Username')
-        password = request.headers.get('Password')
+        username = request.headers.get('username')
+        password = request.headers.get('password')
         createdAccount = database.newAccount(username, password)
         return render_template("loginpage.html")
 

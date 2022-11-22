@@ -49,7 +49,7 @@ def buyProperty(property, player):
 	property["houseCount"] = 0
 	return property
 
-#Changes the occupying number of peole when a player is sitting on the property
+#Changes the occupying number of people when a player is sitting on the property
 def playerEnterProperty(property, player):
 	if player["username"] not in property["occupying"]:
 		property["occupying"] = property["occupying"].append(player["username"])
@@ -130,7 +130,9 @@ def move(game, player, roll):
 	#If the property is a blank slate
 	else:
 		if lodging["name"] == "BLANK" or lodging["name"] == "GO" or lodging["name"] == "FREE PARKING" or lodging["name"] == "JAIL":
-			#Update the location and pass the turn
+			playerExitProperty(currentBoard[currentLocation], player)
+			playerEnterProperty(currentBoard[newLocation], player)
+			player["location"] = newLocation
 			NotImplemented
 		else:
 			raise Exception("!!! PROPERTY ISSUE !!!")

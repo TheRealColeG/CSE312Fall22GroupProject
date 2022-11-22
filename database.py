@@ -39,6 +39,16 @@ if "games" not in db.list_collection_names():
 if "identification" not in db.list_collection_names():
     ids.insert_one({"current" : 0})
 
+def process(diseaseBoat):
+    if diseaseBoat == []:
+        return []
+    else:
+        cleanShip = []
+        for diseased in diseaseBoat:
+            clean = sanitize(diseased)
+            cleanShip.append(clean)
+        return cleanShip
+
 #Deletes the stupid AIDS Mongo _id from ANY ONE dictionary
 def sanitize(diseased):
     cured = {}
@@ -56,7 +66,7 @@ def authAccount(username, password):
         return False
     existing = sanitize(existing[0])
     salt = existing["salt"]
-    hidden = hashlib.sha256((password+salt).encode()).hexdigest
+    hidden = hashlib.sha256((password+salt).encode()).hexdigest()
     if hidden == existing["password"]:
         return True
     else:
@@ -95,10 +105,10 @@ def newAccount(username, password):
     mySalt = salt(16)
     #Creates an entry on the private side
     #["id", "username", "salt", "password"]
-    privatePlayers.insert_one({"id" : cur, "username": username, "salt" : mySalt, "password" : hashlib.sha256((password + mySalt).encode('utf-8')).hexdigest})
+    privatePlayers.insert_one({"id" : cur, "username": username, "salt" : mySalt, "password" : hashlib.sha256((password + mySalt).encode('utf-8')).hexdigest()})
     #Creates an entry on the public side that anyone can access
     #["id", "username", "wins", "monies"]
-    publicPlayers.insert_one({"id" : cur, "username" : username, "wins" : 0, "monies" : 0})
+    publicPlayers.insert_one({"id" : cur, "username" : username, "wins" : 0, "monies" : 0.0})
     #Pulls the newly created record to return from the database (has AIDS _id)
     player = list(publicPlayers.find({"id" : cur}))[0]
     #Updates the ID to the next value
@@ -124,8 +134,7 @@ def delAccount(username, password):
 #This will update their public profile's win count and balance
 def winGame(username, balance):
     #Pull the entry with the matching username
-    entry = list(publicPlayers.find({"username" : username}))[0]
-    entry = sanitize(entry)
+    entry = sanitize(list(publicPlayers.find({"username" : username}))[0])
     #Update their winning balance with what they won with
     bal = entry["monies"] + balance
     #Update the win count
@@ -157,7 +166,7 @@ def changePassword(username, password, newPassword):
         #Update the file with the new salt
         privatePlayers.update_one({"id" : entry["id"]}, {"$set" : {"salt" : newSalt}})
         #Hash the password along with the new salt
-        newPassword = hash(newPassword+"Q"+newSalt)
+        newPassword = hashlib.sha256((newPassword+"Q"+newSalt).encode('utf-8')).hexdigest()
         #Change the password
         privatePlayers.update_one({"id" : entry["id"]}, {"$set" : {"password" : newPassword}})
         return True
@@ -227,3 +236,59 @@ def delToken(id, token):
         return False
     validTokens.delete_one({"id" : hash(id)})
     return True
+
+#Returns win rank for the username
+def rankByWins(username):
+    #Pulls the user profile for that username
+    userProfile = list(publicPlayers.find({"username" : username}))
+    #If there is no profile by that name, return -1 indicating an error.
+    if userProfile == []:
+        return -1
+    userProfile = sanitize(userProfile[0])
+    #Otherwise, pull all profiles and process them, removing the aids _id in the process
+    allProfiles = process(list(publicPlayers.find({})))
+    #Initialize a "Set" containing one value for the number of game wins for every user in the database.
+    winRanking = [0]
+    #For every profile, add the win count into the win ranking "Set"
+    for profile in allProfiles:
+        if profile["wins"] not in winRanking:
+            winRanking.append(profile["wins"])
+    #Sort the "Set" in decreasing order so that the highest win count is at winRanking[0]
+    winRanking.sort()
+    winRanking.reverse()
+    #For every index in the winranking
+    for i in range(len(winRanking)):
+        #Check to see if the win count of the user matches the iterated win count
+        if winRanking[i] == userProfile["wins"]:
+        #If it does, return the index+1 to indicate the rank being 1 at index 0 and so on
+            return i+1
+    #This should never run because userProfile is in allProfiles. If it does, raise an exception.
+    raise Exception("database error!")
+
+#Returns money rank for the username
+def rankByCash(username):
+    #Pulls the user profile for that username
+    userProfile = list(publicPlayers.find({"username" : username}))
+    #If there is no profile by that name, return -1 indicating an error.
+    if userProfile == []:
+        return -1
+    userProfile = sanitize(userProfile[0])
+    #Otherwise, pull all profiles and process them, removing the aids _id in the process
+    allProfiles = process(list(publicPlayers.find({})))
+    #Initialize a "Set" containing one value for the money for every user in the database.
+    moneyRanking = [0.0]
+    #For every profile, add the balance into the money ranking "Set"
+    for profile in allProfiles:
+        if profile["monies"] not in moneyRanking:
+            moneyRanking.append(profile["monies"])
+    #Sort the "Set" in decreasing order so that the highest money count is at moneyRanking[0]
+    moneyRanking.sort()
+    moneyRanking.reverse()
+    #For every index in the moneyRanking
+    for i in range(len(moneyRanking)):
+        #Check to see if the money count of the user matches the iterated balance count
+        if moneyRanking[i] == userProfile["monies"]:
+        #If it does, return the index+1 to indicate the rank being 1 at index 0 and so on
+            return i+1
+    #This should never run because userProfile is in allProfiles. If it does, raise an exception.
+    raise Exception("database error!")
