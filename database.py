@@ -67,15 +67,18 @@ def authAccount(username, password):
     #If there is no such entry at that username
     if existing == []:
         return False
-    existing = sanitize(existing[0])
-    salt = existing["salt"]
-    hidden = hashlib.sha256((password+salt).encode()).hexdigest()
-    if hidden == existing["password"]:
+    #If an entry exists, pull the sanitized account
+    account = sanitize(existing[0])
+    #Hash the password-salt combo and see if it matches what is on file
+    hidden = hashlib.sha256((password+account["salt"]).encode()).hexdigest()
+    #If it matches, return True, authenticating the account
+    if hidden == account["password"]:
         return True
+    #If it does not match, return False as the credentials do not authenticate.
     else:
         return False
 
-#Returns a randomized salt (16 chars)
+#Returns a randomized salt i characters long.
 def salt(i):
     fullList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     chars = []
@@ -86,7 +89,7 @@ def salt(i):
         salt = salt + char
     return salt
 
-#If the username is available, it will create a new player character.
+#If the username is available, it will create a new player character and return the sanitized dictionary
 #If not, it will return -1
 def newAccount(username, password):
     #The list of taken names
@@ -101,7 +104,6 @@ def newAccount(username, password):
         names.append(username)
         #Update the list of taken name
         takenNames.update_one({"names" : copy}, {"$set" : {"names" : names}})
-
     #Pulls the next available ID number
     cur = list(ids.find({}))[0]["current"]
     #Generates a random salt to be applied to the player's profile
@@ -112,12 +114,12 @@ def newAccount(username, password):
     #Creates an entry on the public side that anyone can access
     #["id", "username", "wins", "monies"]
     publicPlayers.insert_one({"id" : cur, "username" : username, "wins" : 0, "monies" : 0.0})
-    #Pulls the newly created record to return from the database (has AIDS _id)
-    player = list(publicPlayers.find({"id" : cur}))[0]
+    #Pulls the newly created record to return from the database
+    player = sanitize(list(publicPlayers.find({"id" : cur}))[0])
     #Updates the ID to the next value
     ids.update_one({"current" : cur}, {"$set" : {"current" : cur+1}})
     #Returns the newly created entry without AIDS _id
-    return sanitize(player)
+    return player
 
 #Returns True if the account is deleted
 #Returns False if the account does not exist or if the credentials are incorrect
@@ -190,7 +192,7 @@ def findAvailableGame():
     #If no lobby has a "contents" of 0, return -1 to indicate all games are full.
     return -1
 
-#Change the value a lobby's game contents to the updated content/game
+#Set the value of a lobby's game contents to the updated content/game
 def setGame(lobby, game):
     games.update_one({"id" : lobby}, {"$set" : {"contents" : game}})
 
