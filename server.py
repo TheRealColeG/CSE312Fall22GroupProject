@@ -3,6 +3,7 @@
 
 from flask import Flask, request, render_template, render_template_string
 from markupsafe import escape
+import sys
 import database
 import templator
 
@@ -21,12 +22,14 @@ def hello_world():
 @app.route("/change-password", methods=['POST'])
 def change_password():
     #Authenticate
-    username = request.headers.get('Username')
-    password = request.headers.get('Password')
-    newPassword = request.headers.get('new-password')
+    username = request.form.get('username', "")
+    password = request.form.get('cur-password', "")
+    newPassword = request.form.get('new-password', "")
+    #TODO - Check if user entered any data/same password/etc.
     truth = database.changePassword(username, password, newPassword)
     if truth:
         return "Successful!"
+        #What?
     else:
         return "Failure!"
 
@@ -57,17 +60,18 @@ def login():
         return render_template("loginpage.html")
     else:  # POST method
         # PARSE the username and password
-        print(request.headers)
-        username = request.headers.get('Username')
-        password = request.headers.get('Password')
+        username = request.form.get('username', "")
+        password = request.form.get('password', "")
+        #TODO - maybe check if there was no username/password before checking DB
         if database.authAccount(username, password):
-            print("Login Successful!")
+            print("Login Successful!", file=sys.stderr)
             return render_template("homepage.html")
         else:
-            print("Login failure!")
+            print("Login failure!", file=sys.stderr)
+            #TODO - Maybe edit the HTML here? Some sort of error message?
             return render_template("loginpage.html")
 
-#
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     print(request.headers, flush=True)
