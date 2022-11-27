@@ -33,7 +33,7 @@ def change_password():
     #else:
     #    return "Failure!"
 
-@app.route('/user/<username>')
+@app.route('/user/username')
 def show_user_profile(username):
     # show the user profile for that user
     username = escape(username)
