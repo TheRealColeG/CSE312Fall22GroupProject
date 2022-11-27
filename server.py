@@ -67,6 +67,7 @@ def lookup():
         authcookie = NotImplemented
         #Auth the cookie
         authStatus = NotImplemented
+        #pull the username from the cookie???
         username = NotImplemented
         if authStatus:
             html = templator.servePrivateUserProfileHTML(username)
@@ -85,14 +86,15 @@ def login():
         # PARSE the username and password
         username = escape(request.form.get('username', ""))
         password = escape(request.form.get('password', ""))
-        #TODO - maybe check if there was no username/password before checking DB
-        #TODO: authAccount does check (line 69 (nice) of database.py returns False if no username exists)
-        if database.authAccount(username, password):
-            print("Login Successful!", file=sys.stderr)
-            return render_template("homepage.html")
+        if username != "" and password != "":
+            if database.authAccount(username, password):
+                print("Login Successful!", file=sys.stderr)
+                return render_template("homepage.html")
+            else:
+                print("Login failure!", file=sys.stderr)
+                #TODO - Maybe edit the HTML here? Some sort of error message?
+                return render_template("loginpage.html")
         else:
-            print("Login failure!", file=sys.stderr)
-            #TODO - Maybe edit the HTML here? Some sort of error message?
             return render_template("loginpage.html")
 
 
