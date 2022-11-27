@@ -43,8 +43,8 @@ def show_user_profile(username):
 
 @app.route('/leaderboard', methods=['GET'])
 def get_leaderboard():
-    balanceLeaderboard = database.pullBalLeaderboard()
-    winLeaderboard = database.pullWinsLeaderboard()
+    html = templator.serveLeaderboardHTML()
+    return html
 
 @app.route('/users', methods=['GET', 'POST'])
 def lookup():
