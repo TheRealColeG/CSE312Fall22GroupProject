@@ -25,13 +25,13 @@ def change_password():
     username = request.form.get('username', "")
     password = request.form.get('cur-password', "")
     newPassword = request.form.get('new-password', "")
+    print("Test case:\nThe username is: "+str(username)+", the 'old' password is: "+str(password)+", and the requested new-password is: "+str(newPassword)+". ", flush=True)
     #TODO - Check if user entered any data/same password/etc.
-    truth = database.changePassword(username, password, newPassword)
-    if truth:
-        return "Successful!"
-        #What?
-    else:
-        return "Failure!"
+    #truth = database.changePassword(username, password, newPassword)
+    #if truth:
+    #    return render_template("homepage.html")
+    #else:
+    #    return "Failure!"
 
 @app.route('/user/<username>')
 def show_user_profile(username):
@@ -41,6 +41,10 @@ def show_user_profile(username):
 
 # Using GET and POST requests for same page
 
+@app.route('/leaderboard', methods=['GET'])
+def get_leaderboard():
+    balanceLeaderboard = database.pullBalLeaderboard()
+    winLeaderboard = database.pullWinsLeaderboard()
 
 @app.route('/users', methods=['GET', 'POST'])
 def lookup():
