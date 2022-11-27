@@ -33,11 +33,11 @@ def change_password():
     #else:
     #    return "Failure!"
 
-@app.route('/user/<username>')
-def show_user_profile(username):
+#@app.route('/user/<username>')
+#def show_user_profile(username):
     # show the user profile for that user
-    username = escape(username)
-    return render_template_string(templator.servePublicUserProfileHTML(username))
+#    username = escape(username)
+#    return render_template_string(templator.servePublicUserProfileHTML(username))
 
 # Using GET and POST requests for same page
 
@@ -48,12 +48,26 @@ def get_leaderboard():
 
 @app.route('/users', methods=['GET', 'POST'])
 def lookup():
-    # Logging in
+    # Pulling one profile
     if request.method == 'POST':
-        return NotImplemented
-    # Pulling every profile
+        #Pull the username out of the 'form' that is the search bar
+        username = escape(request.form.get('search', ""))
+        #Pull the HTML for the profile 
+        html = templator.servePublicUserProfileHTML(username)
+        #If there are no players by that username, html will be -1
+        if html == -1:
+            #In which case, return the homepage's html
+            return render_template("homepage.html")
+        #If there is a player by that username, return the html for their page
+        else:
+            return html
+    # Not sure what this would be for
+    # Using leaderboard's code for now
     else:
-        return NotImplemented
+        #Just grab the leaderboard for a post request, I guess
+        html = templator.serveLeaderboardHTML()
+        #serve
+        return html
 
 # can also do this using .post() and .get()
 

@@ -81,14 +81,10 @@
             </div>
             <br>
             
-              <form action="#">
-                  <input type="text"
-                      placeholder=" Search Courses"
-                      name="search">
-                  <button>
-                      <i class="fa fa-search"
-                          style="font-size: 18px;">
-                      </i>
+              <form action="/users" id="lookup-form" method="post" enctype="multipart/form-data">
+                  <input type="text" placeholder = "Search Players" name = "search" id = "search">
+                  <button class="btn btn-default" type="submit">
+                    <span class="glyphicon glyphicon-search"></span>
                   </button>
               </form>
           
