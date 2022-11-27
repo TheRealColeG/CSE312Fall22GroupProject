@@ -61,13 +61,18 @@ def lookup():
         #If there is a player by that username, return the html for their page
         else:
             return html
-    # Not sure what this would be for
-    # Using leaderboard's code for now
+    #if the user is looking up THEIR OWN LOGGED IN PROFILE
     else:
-        #Just grab the leaderboard for a post request, I guess
-        html = templator.serveLeaderboardHTML()
-        #serve
-        return html
+        #Pull the cookie
+        authcookie = NotImplemented
+        #Auth the cookie
+        authStatus = NotImplemented
+        username = NotImplemented
+        if authStatus:
+            html = templator.servePrivateUserProfileHTML(username)
+            return html
+        else:
+            return render_template("loginpage.html")
 
 # can also do this using .post() and .get()
 
