@@ -64,9 +64,10 @@ def login():
         return render_template("loginpage.html")
     else:  # POST method
         # PARSE the username and password
-        username = request.form.get('username', "")
-        password = request.form.get('password', "")
+        username = escape(request.form.get('username', ""))
+        password = escape(request.form.get('password', ""))
         #TODO - maybe check if there was no username/password before checking DB
+        #TODO: authAccount does check (line 69 (nice) of database.py returns False if no username exists)
         if database.authAccount(username, password):
             print("Login Successful!", file=sys.stderr)
             return render_template("homepage.html")
@@ -78,14 +79,19 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    print(request.headers, flush=True)
+    #print(request.headers, flush=True)
     if request.method == 'GET':
         return render_template("registerpage.html")
     else:
-        username = request.headers.get('username')
-        password = request.headers.get('password')
-        createdAccount = database.newAccount(username, password)
-        return render_template("loginpage.html")
+        username = escape(request.headers.get('username'))
+        password = escape(request.headers.get('password'))
+        #if the username and password are valid
+        if username != "" and password != "":
+            database.newAccount(username, password)
+            return render_template("loginpage.html")
+        #If they are invalid
+        else:
+            return render_template("registerpage.html")
 
 # For use for authentication+player move in the game
 @app.route('/gameplay', methods=['POST'])
