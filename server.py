@@ -11,12 +11,12 @@ app = Flask(__name__)
 
 # Default HTML
 
-
 @app.route("/", methods=['GET'])
 def hello_world():
     return render_template("homepage.html")
 
 # Example of escaping user input - no injection
+
 
 #This doesn't work.
 @app.route("/change-password", methods=['POST'])
@@ -52,7 +52,6 @@ def lookup():
         return NotImplemented
 
 # can also do this using .post() and .get()
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
