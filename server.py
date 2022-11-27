@@ -33,11 +33,11 @@ def change_password():
     #else:
     #    return "Failure!"
 
-@app.route('/user/username')
+@app.route('/user/<username>')
 def show_user_profile(username):
     # show the user profile for that user
-    username = escape(username)
-    return render_template_string(templator.servePublicUserProfileHTML(username))
+#    username = escape(username)
+#    return render_template_string(templator.servePublicUserProfileHTML(username))
 
 # Using GET and POST requests for same page
 
@@ -48,12 +48,32 @@ def get_leaderboard():
 
 @app.route('/users', methods=['GET', 'POST'])
 def lookup():
-    # Logging in
+    # Pulling one profile
     if request.method == 'POST':
-        return NotImplemented
-    # Pulling every profile
+        #Pull the username out of the 'form' that is the search bar
+        username = escape(request.form.get('search', ""))
+        #Pull the HTML for the profile 
+        html = templator.servePublicUserProfileHTML(username)
+        #If there are no players by that username, html will be -1
+        if html == -1:
+            #In which case, return the homepage's html
+            return render_template("homepage.html")
+        #If there is a player by that username, return the html for their page
+        else:
+            return html
+    #if the user is looking up THEIR OWN LOGGED IN PROFILE
     else:
-        return NotImplemented
+        #Pull the cookie
+        authcookie = NotImplemented
+        #Auth the cookie
+        authStatus = NotImplemented
+        #pull the username from the cookie???
+        username = NotImplemented
+        if authStatus:
+            html = templator.servePrivateUserProfileHTML(username)
+            return html
+        else:
+            return render_template("loginpage.html")
 
 # can also do this using .post() and .get()
 
@@ -65,14 +85,15 @@ def login():
         # PARSE the username and password
         username = escape(request.form.get('username', ""))
         password = escape(request.form.get('password', ""))
-        #TODO - maybe check if there was no username/password before checking DB
-        #TODO: authAccount does check (line 69 (nice) of database.py returns False if no username exists)
-        if database.authAccount(username, password):
-            print("Login Successful!", file=sys.stderr)
-            return render_template("homepage.html")
+        if username != "" and password != "":
+            if database.authAccount(username, password):
+                print("Login Successful!", file=sys.stderr)
+                return render_template("homepage.html")
+            else:
+                print("Login failure!", file=sys.stderr)
+                #TODO - Maybe edit the HTML here? Some sort of error message?
+                return render_template("loginpage.html")
         else:
-            print("Login failure!", file=sys.stderr)
-            #TODO - Maybe edit the HTML here? Some sort of error message?
             return render_template("loginpage.html")
 
 

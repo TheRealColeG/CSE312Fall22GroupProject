@@ -21,25 +21,14 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Logo</a>
+        <img src="https://i.imgur.com/3Go0b9Z.png" alt="unavailable" style="width:65px;height:50px;">
       </div>
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav">
           <li class="active"><a href="#">Home</a></li>
-          <li><a href="#">Messages</a></li>
         </ul>
-        <form class="navbar-form navbar-right" role="search">
-          <div class="form-group input-group">
-            <input type="text" class="form-control" placeholder="Search..">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button">
-                <span class="glyphicon glyphicon-search"></span>
-              </button>
-            </span>
-          </div>
-        </form>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#"><span class="glyphicon glyphicon-user"></span> My Account</a></li>
+          <li><a href="http://localhost:8080/users"><span class="glyphicon glyphicon-user"></span> My Account</a></li>
         </ul>
       </div>
     </div>
@@ -80,6 +69,16 @@
               <h3>All or Nothing is a fast, monopoly-derivative game. The goal is to win the game, but as late as
                 possible in order to rack up as much money in the game.</h3>
             </div>
+            <br>
+            
+              <form action="/users" id="lookup-form" method="post" enctype="multipart/form-data">
+                  <input type="text" placeholder = "Search Players" name = "search" id = "search">
+                  <button class="btn btn-default" type="submit">
+                    <span class="glyphicon glyphicon-search"></span>
+                  </button>
+              </form>
+          
+            <br>
           </div>
         </div>
       </div>

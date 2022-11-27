@@ -136,10 +136,13 @@ def move(game, player, roll):
 			NotImplemented
 		else:
 			raise Exception("!!! PROPERTY ISSUE !!!")
-		
+
+#move around the money
 def rent(game, player, property):
 	currentBoard = game["board"]
+	players = game["players"]
 	currentLocation = player["location"]
+	currentOwner = property["currentOwner"]
 
 #Translates indices on the csv property details file to indices on the game board 1D array
 #LITERALLY DONT WORRY ABOUT THIS
