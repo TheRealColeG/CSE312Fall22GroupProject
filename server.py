@@ -36,8 +36,8 @@ def change_password():
 @app.route('/user/<username>')
 def show_user_profile(username):
     # show the user profile for that user
-#    username = escape(username)
-#    return render_template_string(templator.servePublicUserProfileHTML(username))
+   username = escape(username)
+   return render_template_string(templator.servePublicUserProfileHTML(username))
 
 # Using GET and POST requests for same page
 
