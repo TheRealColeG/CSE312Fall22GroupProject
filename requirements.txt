@@ -1,4 +1,4 @@
 pymongo
 Flask==2.0.2
 gym
-flask-socketio
+flask-sock~=0.5.2
