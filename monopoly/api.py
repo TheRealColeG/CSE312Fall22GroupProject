@@ -1,6 +1,5 @@
 import csv
 import random
-import database
 
 #This initializes a player dictionary (object)
 def initPlayer(username, orientation):
@@ -111,7 +110,6 @@ def initGame(usernames, lobby):
 	#Set the game status to "Roll", requiring the current orientation to be rolling the dice.
 	game["status"] = (1, "Roll")
 	#Sends the created Game object straight to the database to be implemented in the 'games' collection
-	database.setGame(lobby, game)
 
 def passGo(player):
 	player["money"] = player["money"] + 200.00
@@ -171,19 +169,27 @@ def move(game, player, roll):
 		currentBoard[currentLocation] = playerExitProperty(currentBoard[currentLocation], player)
 		currentBoard[newLocation] = playerEnterProperty(currentBoard[newLocation], player)
 		player["location"] = newLocation
-		game = rent(game, player, currentBoard[newLocation])
+		
+		#If the property is owned
+		if currentBoard[newLocation]["currentOwner"] != None:
+			game = rent(game, player, currentBoard[newLocation])
+			game = changeTurn(game, player["order"], len(game["players"]))
+		#If the property is not owned
+		else:
+			#Drop the choice to the user
+			game["status"] = (game["status"][0], "Choice")
 		#
-		#Drop the choice to the user
 	#If the property is a blank slate
 	else:
 		if lodging["name"] == "BLANK" or lodging["name"] == "GO" or lodging["name"] == "FREE PARKING" or lodging["name"] == "JAIL":
-			playerExitProperty(currentBoard[currentLocation], player)
-			playerEnterProperty(currentBoard[newLocation], player)
+			currentBoard[currentLocation] = playerExitProperty(currentBoard[currentLocation], player)
+			currentBoard[newLocation] = playerEnterProperty(currentBoard[newLocation], player)
 			player["location"] = newLocation
-			
+			#Move the turn on
 			game = changeTurn(game, player["order"], len(game["players"]))
 		else:
 			raise Exception("!!! PROPERTY ISSUE !!!")
+	return game
 
 #move around the money
 def rent(game, player, property):
