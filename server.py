@@ -6,6 +6,9 @@ from markupsafe import escape
 import sys
 import database
 import templator
+import jack
+import time
+import websockets
 
 app = Flask(__name__)
 
@@ -119,6 +122,20 @@ def move():
     if request.method == 'POST':
         with app.test_request_context('/gameplay', 'POST'):
             assert request.path == '/gameplay'
+
+        command = NotImplemented #???
+        if command == roll:
+            roll = jack.getRoll()
+
+        websockets.pushTemplate() #??? Websocket(S)??
+
+        time.sleep(2)
+
+        
+
+        gameTemplate = NotImplemented #???
+        return gameTemplate
+        
     else:
         raise Exception("Bad Request Method!")
 
