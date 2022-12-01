@@ -8,3 +8,10 @@ import database
 def getRoll():
     roll = api.diceRoll()
     return roll
+
+#
+def sendMove(lobby, player, roll):
+    game = database.pullGame(lobby)
+    game = api.move(game, player, roll)
+    database.setGame(lobby, game)
+    return game["status"]
