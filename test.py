@@ -4,5 +4,7 @@ thisdict = {
   "year": 1964,
   "year": 2020
 }
-k = list(thisdict.keys())
-print(k)
+k = thisdict
+k["model"] = "V"
+thisdict = k
+print(thisdict)

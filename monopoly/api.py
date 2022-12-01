@@ -17,12 +17,22 @@ def initPlayer(username, orientation):
 	player["location"] = 0
 	return player
 
+def setPlayer(username, order, money, properties, location):
+	player = {}
+	player["username"] = username
+	player["order"] = order
+	player["money"] = money
+	player["properties"] = properties
+	player["location"] = location
+	return player
+
 #This kicks a player out of the game
 def bankruptPlayer(player):
 	#The username of every bankrupted player is "INDEBTED INMATE"
 	player["username"] = "INDEBTED INMATE"
 	#Their balance/location is set to none (you can use these to check to see if they are out of the game)
 	player["money"] = None
+	player["properties"] = []
 	player["location"] = None
 	return player
 
@@ -34,10 +44,10 @@ def initProperty(title, cost, mortgage, house, rents, owner, houses, occupied, m
 	property["mortgagePrice"] = mortgage
 	property["houseCost"] = house
 	property["houseRent"] = rents
+	property["houseCount"] = houses
 	property["occupying"] = occupied
 	property["mortgageStatus"] = mortgaged
 	property["currentOwner"] = owner
-	property["houseCount"] = houses
 	return property
 
 #Changes the ownership of the property when it is bought
@@ -56,8 +66,7 @@ def playerEnterProperty(property, player):
 		return property
 	#If a mistake was made
 	else:
-		print("FUCKUP!!! playerEnterProperty() was ran on a property already containing that player!", flush=True)
-		return -1
+		raise Exception("FUCKUP!!! playerEnterProperty() was ran on a property already containing that player!")
 
 #When a player leaves a property update the player count
 def playerExitProperty(property, player):
@@ -66,13 +75,20 @@ def playerExitProperty(property, player):
 		return property
 	#If a mistake was made
 	else:
-		print("FUCKUP!!! playerExitProperty() was ran on a property not containing that player!", flush=True)
-		return -1
+		raise Exception("FUCKUP!!! playerExitProperty() was ran on a property not containing that player!")
 
 #Reverses the mortgage status of a property when called
 def mortgageProperty(property):
 	property["mortgageStatus"] = not property["mortgageStatus"]
 	return property
+
+#If the turn is moved to the next player, change the game's built in turn indicator
+def changeTurn(game, turn, playerCount):
+	#If the turn is 4 and there are 4 players, set it to 1. For any dynamic playercount
+	if turn == playerCount:
+		game["status"] = (1, game["status"][1])
+	else:
+		game["status"] = (game["status"][0]+1, game["status"][1])
 
 def initGame(usernames, lobby):
 	game = {}
@@ -91,9 +107,10 @@ def initGame(usernames, lobby):
 		game["board"][0] = playerEnterProperty(game["board"][0], player)
 	#A list of player dictionaries that have been kicked out of the game due to bankruptcy (No one because everybody starts with money).
 	game["bankrupted"] = []
+	#Set the game status to "Roll", requiring the current orientation to be rolling the dice.
+	game["status"] = (1, "Roll")
 	#Sends the created Game object straight to the database to be implemented in the 'games' collection
 	database.setGame(lobby, game)
-	#???
 
 def passGo(player):
 	player["money"] = player["money"] + 200.00
@@ -110,6 +127,7 @@ def bankrupt(game, player):
 			game["bankrupted"] = game["bankrupted"].append(playerDictionary)
 			break
 		i = i + 1
+	return game
 
 #Input is a game dictionary, player dictionary and roll (int)
 def move(game, player, roll):
@@ -126,23 +144,43 @@ def move(game, player, roll):
 	lodging = currentBoard[newLocation]
 	#If the property is a buyable asset
 	if lodging["baseCost"] != None:
+		#Move the character and send the choice to 
+		playerExitProperty(currentBoard[currentLocation], player)
+		playerEnterProperty(currentBoard[newLocation], player)
+		player["location"] = newLocation
 		NotImplemented
+		#Drop the choice to the user
 	#If the property is a blank slate
 	else:
 		if lodging["name"] == "BLANK" or lodging["name"] == "GO" or lodging["name"] == "FREE PARKING" or lodging["name"] == "JAIL":
 			playerExitProperty(currentBoard[currentLocation], player)
 			playerEnterProperty(currentBoard[newLocation], player)
 			player["location"] = newLocation
-			NotImplemented
+			
+			changeTurn(game, player["order"], len(game["players"]))
 		else:
 			raise Exception("!!! PROPERTY ISSUE !!!")
 
 #move around the money
 def rent(game, player, property):
-	currentBoard = game["board"]
 	players = game["players"]
-	currentLocation = player["location"]
 	currentOwner = property["currentOwner"]
+	payeeIndex = -1
+	ownerIndex = -1
+	rent = property["houseRent"][property["houseCount"]]
+	for i in range(len(players)):
+		if players[i] == player:
+			payeeIndex = i
+		if players[i]["username"] == currentOwner:
+			ownerIndex = i
+	if ownerIndex != payeeIndex:
+		curOwner = players[ownerIndex]
+		players[ownerIndex] = setPlayer(curOwner["username"], curOwner["order"], curOwner["money"] + rent, curOwner["properties"], curOwner["location"])
+		curRenter = players[payeeIndex]
+		players[payeeIndex] = setPlayer(curRenter["username"], curRenter["order"], curRenter["money"] - rent, curRenter["properties"], curRenter["location"])
+		if players[payeeIndex]["money"] < 0:
+			1
+
 
 #Translates indices on the csv property details file to indices on the game board 1D array
 #LITERALLY DONT WORRY ABOUT THIS
