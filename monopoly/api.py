@@ -44,10 +44,10 @@ def initProperty(title, cost, mortgage, house, rents, owner, houses, occupied, m
 	property["mortgagePrice"] = mortgage
 	property["houseCost"] = house
 	property["houseRent"] = rents
+	property["currentOwner"] = owner
 	property["houseCount"] = houses
 	property["occupying"] = occupied
 	property["mortgageStatus"] = mortgaged
-	property["currentOwner"] = owner
 	return property
 
 #Changes the ownership of the property when it is bought
@@ -89,6 +89,7 @@ def changeTurn(game, turn, playerCount):
 		game["status"] = (1, game["status"][1])
 	else:
 		game["status"] = (game["status"][0]+1, game["status"][1])
+	return game
 
 def initGame(usernames, lobby):
 	game = {}
@@ -123,10 +124,32 @@ def bankrupt(game, player):
 	i = 0
 	for playerDictionary in game["players"]:
 		if playerDictionary["username"] == playerUsername:
+			#Set the game["playeres"] to a bankrupted player
 			game["players"][i] = bankruptPlayer(playerDictionary)
+			#Append the game's bankruptcy list with the bankrupted player
 			game["bankrupted"] = game["bankrupted"].append(playerDictionary)
 			break
 		i = i + 1
+
+	#Get the indices of all the owned property from that player
+	indices = []
+	for i in range(len(game["board"])):
+		if game["board"][i]["currentOwner"] == player["username"]:
+			indices.append(i)
+
+	touchBoard = game["board"]
+	#For the index of all the board pieces he owns
+	for i in indices:
+		#Set the current owner to None
+		touchBoard[i]["currentOwner"] = None
+		#Un-mortgage every property
+		touchBoard[i]["mortgageStatus"] = False
+		#Knock the housecount to 0
+		touchBoard[i]["houseCount"] = 0
+
+	#Set the game's board to the changed board
+	game["board"] = touchBoard
+	#???
 	return game
 
 #Input is a game dictionary, player dictionary and roll (int)
@@ -145,10 +168,11 @@ def move(game, player, roll):
 	#If the property is a buyable asset
 	if lodging["baseCost"] != None:
 		#Move the character and send the choice to 
-		playerExitProperty(currentBoard[currentLocation], player)
-		playerEnterProperty(currentBoard[newLocation], player)
+		currentBoard[currentLocation] = playerExitProperty(currentBoard[currentLocation], player)
+		currentBoard[newLocation] = playerEnterProperty(currentBoard[newLocation], player)
 		player["location"] = newLocation
-		NotImplemented
+		game = rent(game, player, currentBoard[newLocation])
+		#
 		#Drop the choice to the user
 	#If the property is a blank slate
 	else:
@@ -157,7 +181,7 @@ def move(game, player, roll):
 			playerEnterProperty(currentBoard[newLocation], player)
 			player["location"] = newLocation
 			
-			changeTurn(game, player["order"], len(game["players"]))
+			game = changeTurn(game, player["order"], len(game["players"]))
 		else:
 			raise Exception("!!! PROPERTY ISSUE !!!")
 
@@ -179,8 +203,9 @@ def rent(game, player, property):
 		curRenter = players[payeeIndex]
 		players[payeeIndex] = setPlayer(curRenter["username"], curRenter["order"], curRenter["money"] - rent, curRenter["properties"], curRenter["location"])
 		if players[payeeIndex]["money"] < 0:
-			1
-
+			game = bankrupt(game, player)
+	game["players"] = player
+	return game
 
 #Translates indices on the csv property details file to indices on the game board 1D array
 #LITERALLY DONT WORRY ABOUT THIS
