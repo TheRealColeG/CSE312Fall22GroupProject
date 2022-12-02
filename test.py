@@ -1,6 +1,8 @@
-import time
+import random
+def getRoll():
+    possible = "123456"
+    rollOne = int(random.choice(possible))
+    rollTwo = int(random.choice(possible))
+    return (rollOne, rollTwo)
 
-print("0")
-
-time.sleep(10)
-print("1")
+print(getRoll())
