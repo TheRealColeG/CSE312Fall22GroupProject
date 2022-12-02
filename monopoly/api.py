@@ -31,7 +31,7 @@ def bankruptPlayer(player):
 	#Their balance/location is set to none (you can use these to check to see if they are out of the game)
 	player["money"] = None
 	player["properties"] = []
-	player["location"] = None
+	player["location"] = 10
 	return player
 
 #Initializes the property based on what is passed

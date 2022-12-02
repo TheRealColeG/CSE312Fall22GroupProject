@@ -27,3 +27,5 @@ def pullPlayerList(lobby):
     playerList = game["players"]
     return json.dumps(playerList)
     
+def checkEnd(lobby):
+    1
