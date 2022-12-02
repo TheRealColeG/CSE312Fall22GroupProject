@@ -210,12 +210,13 @@ def rent(game, player, property):
 		players[payeeIndex] = setPlayer(curRenter["username"], curRenter["order"], curRenter["money"] - rent, curRenter["properties"], curRenter["location"])
 		if players[payeeIndex]["money"] < 0:
 			game = bankrupt(game, player)
-	game["players"] = player
+	game["players"] = players
 	game["status"] = (game["status"][0], "Roll") 
+	game = changeTurn(game, player["order"], len(game["players"]))
 	return game
 
 #Translates indices on the csv property details file to indices on the game board 1D array
-#LITERALLY DONT WORRY ABOUT THIS
+#LITERALLY DONT WORRY ABOUT THIS. If this is touched I will eat your face.
 def translate(i):
 	if i == 1:
 		return i + 2
