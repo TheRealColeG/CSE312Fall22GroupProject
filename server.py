@@ -124,6 +124,9 @@ def register():
 # For use for authentication+player move in the game
 @app.route('/gameplay/<lobby>', methods=['POST'])
 def move(lobby):
+
+    #authenticate token here:
+
     try:
         lobby = int(lobby)
     except:
@@ -134,10 +137,15 @@ def move(lobby):
             assert request.path == '/gameplay'
 
 
-
-        command = NotImplemented #??? What is the player trying to do
+        command = NotImplemented #???
         player = NotImplemented #??? Identify the username of the player that is sending the command
         #Maybe do this ^^^ with authenticated XSRF token...? Sounds like a good idea.
+
+        
+        if command == "Roll":
+            roll = jack.getRoll()
+
+        # websockets.pushTemplate() #??? Websocket(S)??
 
         websockets.pushTemplate() #??? Websocket(S)??
 
