@@ -17,6 +17,15 @@ sock = Sock(app)
 
 # Default HTML
 
+def getRoll():
+	#The list of possible die roll
+	support = "123456"
+	#Choose two die outcomes. (This ensures rolling a 7 still remains higher probability than a 12)
+	firstRoll = int(random.choice(support))
+	secondRoll = int(random.choice(support))
+
+	return (firstRoll, secondRoll)
+
 
 @app.route("/", methods=['GET'])
 def hello_world():
@@ -140,19 +149,17 @@ def move(lobby):
         player = NotImplemented #??? Identify the username of the player that is sending the command
         #Maybe do this ^^^ with authenticated XSRF token...? Sounds like a good idea.
 
-        
         if command == 'Roll':
             roll = getRoll()
-            websockets.pushTemplate() #Push the dice result
+            # websockets.pushTemplate() #Push the dice result
             time.sleep(2) #Let the player read it before moving pieces
-
 
             status = jack.sendMove(lobby, player, roll)
             #If the player has to choose to buy/rent/etc.
 
             #Not sure what's going on down here.
-            if status == "Choice":
-                websockets.pushTemplate() #Push the board to the same player and wait for a response
+            # if status == "Choice":
+            #     websockets.pushTemplate() #Push the board to the same player and wait for a response
 
         time.sleep(2)
 
