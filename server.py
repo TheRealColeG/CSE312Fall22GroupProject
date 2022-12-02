@@ -9,7 +9,6 @@ import database
 import templator
 import jack
 import time
-import websockets
 import json
 import random
 
@@ -142,16 +141,20 @@ def move(lobby):
         #Maybe do this ^^^ with authenticated XSRF token...? Sounds like a good idea.
 
         
-        if command == "Roll":
-            roll = jack.getRoll()
+        if command == 'Roll':
+            roll = getRoll()
+            websockets.pushTemplate() #Push the dice result
+            time.sleep(2) #Let the player read it before moving pieces
 
-        # websockets.pushTemplate() #??? Websocket(S)??
 
-        websockets.pushTemplate() #??? Websocket(S)??
+            status = jack.sendMove(lobby, player, roll)
+            #If the player has to choose to buy/rent/etc.
+
+            #Not sure what's going on down here.
+            if status == "Choice":
+                websockets.pushTemplate() #Push the board to the same player and wait for a response
 
         time.sleep(2)
-
-        
 
         gameTemplate = NotImplemented #???
         return gameTemplate
