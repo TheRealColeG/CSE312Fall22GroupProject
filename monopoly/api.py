@@ -1,5 +1,4 @@
 import csv
-import random
 
 #This initializes a player dictionary (object)
 def initPlayer(username, orientation):
@@ -90,7 +89,7 @@ def changeTurn(game, turn, playerCount):
 		game["status"] = (game["status"][0]+1, game["status"][1])
 	return game
 
-def initGame(usernames, lobby):
+def initGame(usernames):
 	game = {}
 	#Initializes the monopoly board
 	game["board"] = initBoard()
@@ -110,6 +109,7 @@ def initGame(usernames, lobby):
 	#Set the game status to "Roll", requiring the current orientation to be rolling the dice.
 	game["status"] = (1, "Roll")
 	#Sends the created Game object straight to the database to be implemented in the 'games' collection
+	return game
 
 def passGo(player):
 	player["money"] = player["money"] + 200.00
@@ -310,12 +310,3 @@ def initBoard():
 				ret_val[i] = initProperty("BLANK", None, None, None, 0, 0, None, 0, None, None)
 	#ret_val is now a starter monopoly board
 	return ret_val
-
-def diceRoll():
-	#The list of possible die roll
-	support = "123456"
-	#Choose two die outcomes. (This ensures rolling a 7 still remains higher probability than a 12)
-	firstRoll = int(random.choice(support))
-	secondRoll = int(random.choice(support))
-
-	return (firstRoll, secondRoll)

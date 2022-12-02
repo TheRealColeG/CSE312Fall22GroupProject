@@ -9,11 +9,20 @@ import templator
 import jack
 import time
 import websockets
+import random
 
 app = Flask(__name__)
 
 # Default HTML
 
+def getRoll():
+	#The list of possible die roll
+	support = "123456"
+	#Choose two die outcomes. (This ensures rolling a 7 still remains higher probability than a 12)
+	firstRoll = int(random.choice(support))
+	secondRoll = int(random.choice(support))
+
+	return (firstRoll, secondRoll)
 
 @app.route("/", methods=['GET'])
 def hello_world():
@@ -118,19 +127,29 @@ def register():
             return render_template("registerpage.html")
 
 # For use for authentication+player move in the game
-@app.route('/gameplay', methods=['POST'])
-def move():
+@app.route('/gameplay/<lobby>', methods=['POST'])
+def move(lobby):
+    try:
+        lobby = int(lobby)
+    except:
+        print("Fraud detected.", flush=True)
     if request.method == 'POST':
+        #I don't know what this is:
         with app.test_request_context('/gameplay', 'POST'):
             assert request.path == '/gameplay'
 
-        command = NotImplemented #???
-        if command == roll:
-            roll = jack.getRoll()
 
-        websockets.pushTemplate() #??? Websocket(S)??
 
-        time.sleep(2)
+        command = NotImplemented #??? What is the player trying to do
+        player = NotImplemented #??? Identify the username of the player that is sending the command
+        #Maybe do this ^^^ with authenticated XSRF token...? Sounds like a good idea.
+
+        if command == 'Roll':
+            roll = getRoll()
+            websockets.pushTemplate() #Push the dice result
+            time.sleep(2) #Let the player read it before moving pieces
+
+        
 
         
 
