@@ -15,9 +15,13 @@ import random
 app = Flask(__name__, static_folder="./static/functions.js")
 sock = Sock(app)
 
+def getRoll():
+    possible = "123456"
+    rollOne = int(random.choice(possible))
+    rollTwo = int(random.choice(possible))
+    return (rollOne, rollTwo)
+
 # Default HTML
-
-
 @app.route("/", methods=['GET'])
 def hello_world():
     return render_template("homepage.html")
@@ -167,7 +171,7 @@ def send_report():
     return send_from_directory('static', 'functions.js')
 
 @sock.route('/websocket') # can be dynamically changed
-def echo(ws): #final branch fix
+def echo(ws):
     random_username = "User" + str(random.randint(0, 1000))
     status = json.loads(ws.receive())
     # print(status)
