@@ -23,15 +23,6 @@ def getRoll():
 
 # Default HTML
 
-def getRoll():
-	#The list of possible die roll
-	support = "123456"
-	#Choose two die outcomes. (This ensures rolling a 7 still remains higher probability than a 12)
-	firstRoll = int(random.choice(support))
-	secondRoll = int(random.choice(support))
-
-	return (firstRoll, secondRoll)
-
 
 @app.route("/", methods=['GET'])
 def hello_world():
@@ -180,7 +171,7 @@ def send_report():
     return send_from_directory('static', 'functions.js')
 
 @sock.route('/websocket') # can be dynamically changed
-def echo(ws):
+def echo(ws): #final branch fix
     random_username = "User" + str(random.randint(0, 1000))
     status = json.loads(ws.receive())
     # print(status)
