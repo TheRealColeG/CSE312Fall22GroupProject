@@ -273,6 +273,7 @@ def initBoard():
 	
 	#For every index 0-39 of the 1D array, this will set the property object.
 	for i in range(40):
+		#[0   0    0    0    0    0   ...    0]
 		#If the iteration is on the first property it will fill in all the property elements immediately because there will be 20/22.
 		if i == 1:
 			#Open the csv file and read from there.
@@ -282,12 +283,13 @@ def initBoard():
 				index = 1
 				#For every property
 				for property in properties:
-					#This maps a board array index to the NEXT board array index which points to the NEXT property piece.
-					index = translate(index)
 					#If there IS a next index, map the element to a newly created property object having the attributes in that csv file.
 					if index != 0:
 						#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
 						ret_val[index] = initProperty(property[0], float(property[1]), float(property[2]), float(property[3]), (float(property[4]), float(property[5]), float(property[6]), float(property[7]), float(property[8]), float(property[9])), None, 0, [], False)
+					
+					#This maps a board array index to the NEXT board array index which points to the NEXT property piece.
+					index = translate(index)
 		#If the iteration is not supposed to be a property
 		elif i == 0 or i == 2 or i == 4 or i == 5 or i == 7 or i == 10 or i == 12 or i == 15 or i == 17 or i == 20 or i == 22 or i == 25 or i == 28 or i == 30 or i == 33 or i == 35 or i == 36 or i == 38:
 			#If the property is GO
