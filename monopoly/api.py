@@ -211,6 +211,7 @@ def rent(game, player, property):
 		if players[payeeIndex]["money"] < 0:
 			game = bankrupt(game, player)
 	game["players"] = player
+	game["status"] = (game["status"][0], "Roll") 
 	return game
 
 #Translates indices on the csv property details file to indices on the game board 1D array
