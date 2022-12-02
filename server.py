@@ -156,7 +156,7 @@ def send_report():
     return send_from_directory('static', 'functions.js')
 
 @sock.route('/websocket') # can be dynamically changed
-def echo(ws): #
+def echo(ws): #final branch fix
     random_username = "User" + str(random.randint(0, 1000))
     status = json.loads(ws.receive())
     # print(status)
