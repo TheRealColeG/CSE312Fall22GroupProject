@@ -19,7 +19,7 @@ function sendMessage() {
     chatBox.value = "";
     chatBox.focus();
     if (comment !== "") {
-        socket.send(JSON.stringify({'Username': 'ChangedByServer', 'comment': comment}));
+        socket.send(JSON.stringify({'messageType': 'chatMessage', 'Username': 'ChangedByServer', 'comment': comment}));
     }
 }
 
@@ -32,7 +32,13 @@ function addMessage(chatMessage) {
 // Called whenever data is received from the server over the WebSocket connection
 socket.onmessage = function(ws_message) {
     const message = JSON.parse(ws_message.data)
-    addMessage(message)
+    const messageType = message.messageType
+    
+    switch (messageType) {
+        case 'chatMessage':
+            addMessage(message);
+            break;  
+    }
 }
 
 socket.onopen = function(event) {
