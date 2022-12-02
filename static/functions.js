@@ -19,7 +19,7 @@ function sendMessage() {
     chatBox.value = "";
     chatBox.focus();
     if (comment !== "") {
-        socket.send(JSON.stringify({'messageType': 'chatMessage', 'Username': 'ChangedByServer', 'comment': comment}));
+        socket.send(JSON.stringify({'messageType': 'chatMessage', 'comment': comment}));
     }
 }
 
@@ -33,7 +33,7 @@ function addMessage(chatMessage) {
 socket.onmessage = function(ws_message) {
     const message = JSON.parse(ws_message.data)
     const messageType = message.messageType
-    
+
     switch (messageType) {
         case 'chatMessage':
             addMessage(message);
@@ -43,12 +43,12 @@ socket.onmessage = function(ws_message) {
 
 socket.onopen = function(event) {
     console.log("Client connected!");
-    socket.send(JSON.stringify({'Username': 'ChangedByServer', 'socketMessage': "connected"}));
+    socket.send(JSON.stringify({'socketMessage': "connected"}));
 }
 
 socket.onclose = function(event) {
     console.log('The connection has been closed successfully.');
-    socket.send(JSON.stringify({'Username': 'ChangedByServer', 'socketMessage': "close"}));
+    socket.send(JSON.stringify({'socketMessage': "close"}));
 }
 
 // Handle any errors that occur.

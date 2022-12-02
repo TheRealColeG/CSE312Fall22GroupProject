@@ -183,7 +183,7 @@ def echo(ws): #final branch fix
     while ws.connected:
         data = ws.receive()
         data_received = json.loads(data)
-        data_to_send = {'username': random_username, 'message': data_received['comment']}
+        data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
         # ws.send(json.dumps(data_to_send))
         for user in database.active_users:
             try:
