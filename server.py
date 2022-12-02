@@ -18,6 +18,7 @@ sock = Sock(app)
 
 # Default HTML
 
+
 @app.route("/", methods=['GET'])
 def hello_world():
     return render_template("homepage.html")
@@ -121,19 +122,28 @@ def register():
             return render_template("registerpage.html")
 
 # For use for authentication+player move in the game
-@app.route('/gameplay', methods=['POST'])
-def move():
+@app.route('/gameplay/<lobby>', methods=['POST'])
+def move(lobby):
+    try:
+        lobby = int(lobby)
+    except:
+        print("Fraud detected.", flush=True)
     if request.method == 'POST':
+        #I don't know what this is:
         with app.test_request_context('/gameplay', 'POST'):
             assert request.path == '/gameplay'
 
-        command = NotImplemented #???
-        if command == roll:
-            roll = jack.getRoll()
 
-        # websockets.pushTemplate() #??? Websocket(S)??
+
+        command = NotImplemented #??? What is the player trying to do
+        player = NotImplemented #??? Identify the username of the player that is sending the command
+        #Maybe do this ^^^ with authenticated XSRF token...? Sounds like a good idea.
+
+        websockets.pushTemplate() #??? Websocket(S)??
 
         time.sleep(2)
+
+        
 
         gameTemplate = NotImplemented #???
         return gameTemplate
