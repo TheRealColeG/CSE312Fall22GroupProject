@@ -5,9 +5,9 @@ import database
 #TAKES COMMANDS FROM SERVER.PY
 #Rolls the dice and reads api.py status codes
 
-def getRoll():
-    roll = api.diceRoll()
-    return roll
+def startGame(lobby, usernames):
+    game = api.initGame(usernames)
+    database.setGame(lobby, game)
 
 #
 def sendMove(lobby, player, roll):
