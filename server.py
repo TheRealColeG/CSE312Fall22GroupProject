@@ -22,6 +22,8 @@ def getRoll():
     return (rollOne, rollTwo)
 
 # Default HTML
+
+
 @app.route("/", methods=['GET'])
 def hello_world():
     return render_template("homepage.html")
@@ -144,12 +146,10 @@ def move(lobby):
         player = NotImplemented #??? Identify the username of the player that is sending the command
         #Maybe do this ^^^ with authenticated XSRF token...? Sounds like a good idea.
 
-        
         if command == 'Roll':
             roll = getRoll()
             websockets.pushTemplate() #Push the dice result
             time.sleep(2) #Let the player read it before moving pieces
-
 
             status = jack.sendMove(lobby, player, roll)
             #If the player has to choose to buy/rent/etc.
@@ -171,7 +171,7 @@ def send_report():
     return send_from_directory('static', 'functions.js')
 
 @sock.route('/websocket') # can be dynamically changed
-def echo(ws):
+def echo(ws): #final branch fix
     random_username = "User" + str(random.randint(0, 1000))
     status = json.loads(ws.receive())
     # print(status)
