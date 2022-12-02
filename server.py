@@ -1,7 +1,8 @@
 # Much of the following is copied from the documentation on Flask's website:
 #   https://flask.palletsprojects.com/en/2.2.x/quickstart/
 
-from flask import Flask, request, render_template, render_template_string
+from flask import Flask, request, render_template, render_template_string, send_from_directory
+from flask_sock import Sock
 from markupsafe import escape
 import sys
 import database
@@ -9,8 +10,11 @@ import templator
 import jack
 import time
 import websockets
+import json
+import random
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="./static/functions.js")
+sock = Sock(app)
 
 # Default HTML
 
@@ -127,17 +131,40 @@ def move():
         if command == roll:
             roll = jack.getRoll()
 
-        websockets.pushTemplate() #??? Websocket(S)??
+        # websockets.pushTemplate() #??? Websocket(S)??
 
         time.sleep(2)
-
-        
 
         gameTemplate = NotImplemented #???
         return gameTemplate
         
     else:
         raise Exception("Bad Request Method!")
+
+@app.route('/functions.js')
+def send_report():
+    return send_from_directory('static', 'functions.js')
+
+@sock.route('/websocket') # can be dynamically changed
+def echo(ws):
+    random_username = "User" + str(random.randint(0, 1000))
+    status = json.loads(ws.receive())
+    # print(status)
+    if (status['socketMessage'] == "connected"):
+        database.active_users[random_username] = ws
+    elif (status['socketMessage'] == "close"):
+        del database.active_users[random_username]
+
+    while ws.connected:
+        data = ws.receive()
+        data_received = json.loads(data)
+        data_to_send = {'username': random_username, 'message': data_received['comment']}
+        # ws.send(json.dumps(data_to_send))
+        for user in database.active_users:
+            try:
+                database.active_users[user].send(json.dumps(data_to_send))
+            except:
+                continue
 
 # DON'T CHANGE THIS!
 if __name__ == "__main__":
