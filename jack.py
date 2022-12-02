@@ -1,5 +1,6 @@
 from monopoly import api
 import database
+import json
 
 #A multi-use tool. It touches the database when it needs to be touched; and this communicates with server.py
 #TAKES COMMANDS FROM SERVER.PY
@@ -15,3 +16,14 @@ def sendMove(lobby, player, roll):
     game = api.move(game, player, roll)
     database.setGame(lobby, game)
     return game["status"]
+
+def pullBoard(lobby):
+    game = database.pullGame(lobby)
+    board = game["board"]
+    return json.dumps(board)
+
+def pullPlayerList(lobby):
+    game = database.pullGame(lobby)
+    playerList = game["players"]
+    return json.dumps(playerList)
+    

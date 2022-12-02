@@ -189,6 +189,7 @@ def move(game, player, roll):
 			game = changeTurn(game, player["order"], len(game["players"]))
 		else:
 			raise Exception("!!! PROPERTY ISSUE !!!")
+	game["board"] = currentBoard
 	return game
 
 #move around the money
