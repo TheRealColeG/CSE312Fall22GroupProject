@@ -148,15 +148,15 @@ def move(lobby):
 
         if command == 'Roll':
             roll = getRoll()
-            # websockets.pushTemplate() #Push the dice result
+            websockets.pushTemplate() #Push the dice result
             time.sleep(2) #Let the player read it before moving pieces
 
             status = jack.sendMove(lobby, player, roll)
             #If the player has to choose to buy/rent/etc.
 
             #Not sure what's going on down here.
-            # if status == "Choice":
-            #     websockets.pushTemplate() #Push the board to the same player and wait for a response
+            if status == "Choice":
+                websockets.pushTemplate() #Push the board to the same player and wait for a response
 
         time.sleep(2)
 
