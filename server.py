@@ -35,16 +35,16 @@ def hello_world():
 @app.route("/change-password", methods=['POST'])
 def change_password():
     #Authenticate
-    username = request.form.get('username', "")
-    password = request.form.get('cur-password', "")
-    newPassword = request.form.get('new-password', "")
+    username = escape(request.form.get('username', ""))
+    password = escape(request.form.get('cur-password', ""))
+    newPassword = escape(request.form.get('new-password', ""))
     print("Test case:\nThe username is: "+str(username)+", the 'old' password is: "+str(password)+", and the requested new-password is: "+str(newPassword)+". ", flush=True)
     #TODO - Check if user entered any data/same password/etc.
-    #truth = database.changePassword(username, password, newPassword)
-    #if truth:
-    #    return render_template("homepage.html")
-    #else:
-    #    return "Failure!"
+    truth = database.changePassword(username, password, newPassword)
+    if truth:
+        return redirect('/login', 301)
+    else:
+        return "Failure!"
 
 @app.route('/user/<username>')
 def show_user_profile(username):
@@ -78,16 +78,13 @@ def lookup():
     else:
         #Pull the cookie
         authCookie = escape(request.cookies.get('auth'))
-        print("Plaintext auth cookie: "+str(authCookie), flush=True)
-        #Auth the cookie
+        #Auth the cookie and gain the username
         username = database.authAuthCookie(str(authCookie))
-        print("The username associated with the token is: "+str(username), flush=True)
-        #pull the username from the cookie???
         if username != False:
             html = templator.servePrivateUserProfileHTML(username)
             return html
         else:
-            return render_template("loginpage.html")
+            return redirect('/login', 301)
 
 # can also do this using .post() and .get()
 

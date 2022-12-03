@@ -164,7 +164,9 @@ def playerDetails(username):
 #Returns false if they do not
 def changePassword(username, password, newPassword):
     #If the username and password correspond to an account
+    print("From database: the username is: "+str(username), flush=True)
     if authAccount(username, password):
+        print("Account authenticated with current login info in database.py", flush=True)
         #Pull the entry for that username
         entry = list(privatePlayers.find({"username" : username}))[0]
         entry = sanitize(entry)
@@ -173,7 +175,7 @@ def changePassword(username, password, newPassword):
         #Update the file with the new salt
         privatePlayers.update_one({"id" : entry["id"]}, {"$set" : {"salt" : newSalt}})
         #Hash the password along with the new salt
-        newPassword = hashlib.sha256((newPassword+"Q"+newSalt).encode('utf-8')).hexdigest()
+        newPassword = hashlib.sha256((newPassword+newSalt).encode('utf-8')).hexdigest()
         #Change the password
         privatePlayers.update_one({"id" : entry["id"]}, {"$set" : {"password" : newPassword}})
         return True
