@@ -1,7 +1,7 @@
 # Much of the following is copied from the documentation on Flask's website:
 #   https://flask.palletsprojects.com/en/2.2.x/quickstart/
 
-from flask import Flask, request, render_template, render_template_string, send_from_directory
+from flask import Flask, request, render_template, render_template_string, send_from_directory, redirect, make_response
 from flask_sock import Sock
 from markupsafe import escape
 import sys
@@ -77,12 +77,13 @@ def lookup():
     #if the user is looking up THEIR OWN LOGGED IN PROFILE
     else:
         #Pull the cookie
-        authcookie = NotImplemented
+        authCookie = escape(request.cookies.get('auth'))
+        print("Plaintext auth cookie: "+str(authCookie), flush=True)
         #Auth the cookie
-        authStatus = NotImplemented
+        username = database.authAuthCookie(str(authCookie))
+        print("The username associated with the token is: "+str(username), flush=True)
         #pull the username from the cookie???
-        username = NotImplemented
-        if authStatus:
+        if username != False:
             html = templator.servePrivateUserProfileHTML(username)
             return html
         else:
@@ -100,10 +101,15 @@ def login():
         password = escape(request.form.get('password', ""))
         if username != "" and password != "":
             if database.authAccount(username, password):
-                print("Login Successful!", file=sys.stderr)
-                return render_template("homepage.html")
+                print("Login Successful!", flush=True)
+                cookie = database.genAuthCookie(username)
+                res = make_response(f"Login Successful. Cookie made.")
+                res.set_cookie("auth", cookie)
+                res.location = '/'
+                res.status_code = 301
+                return res
             else:
-                print("Login failure!", file=sys.stderr)
+                print("Login failure!", flush=True)
                 #TODO - Maybe edit the HTML here? Some sort of error message?
                 return render_template("loginpage.html")
         else:
@@ -116,12 +122,12 @@ def register():
     if request.method == 'GET':
         return render_template("registerpage.html")
     else:
-        username = escape(request.headers.get('username'))
-        password = escape(request.headers.get('password'))
+        username = escape(request.form.get('username', ""))
+        password = escape(request.form.get('password', ""))
         #if the username and password are valid
         if username != "" and password != "":
             database.newAccount(username, password)
-            return render_template("loginpage.html")
+            return redirect('/login', 301)
         #If they are invalid
         else:
             return render_template("registerpage.html")

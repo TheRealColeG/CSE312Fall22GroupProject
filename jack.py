@@ -9,16 +9,21 @@ import json
 def startGame(lobby, usernames):
     game = api.initGame(usernames)
     database.setGame(lobby, game)
+    return game["status"]
 
 #
 def sendMove(lobby, player, roll):
     game = database.pullGame(lobby)
+    if game == 0:
+        raise Exception("No game available.")
     game = api.move(game, player, roll)
     database.setGame(lobby, game)
     return game["status"]
 
 def pullBoard(lobby):
     game = database.pullGame(lobby)
+    if game == 0:
+        raise Exception("No game available.")
     board = game["board"]
     return json.dumps(board)
 
@@ -26,6 +31,3 @@ def pullPlayerList(lobby):
     game = database.pullGame(lobby)
     playerList = game["players"]
     return json.dumps(playerList)
-    
-def checkEnd(lobby):
-    1

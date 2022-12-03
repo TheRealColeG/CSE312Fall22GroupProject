@@ -16,9 +16,10 @@ publicPlayers = db["players"]
 privatePlayers = db["information"]
 #Taken Usernames
 takenNames = db["names"]
-#List of XSRF tokens that have ever been generated in the server. (64 bytes each). Don't let this become too large a file if lots of people use the website
-validTokens = db["tokens"]
-#Keeps track of the most current TOKEN id (starting at 0)
+#Valid authentication cookies for the users (64 bytes each). Don't let this become too large a file if lots of people use the website
+authCookies = db["auth-cookies"]
+#Valid XSRF tokens for the useres (16/32 bytes each)
+xsrfTokens = db["xsrf-tokens"]
 
 #If there are no accounts created
 if "names" not in db.list_collection_names():
@@ -43,7 +44,7 @@ if "identification" not in db.list_collection_names():
 def process(diseaseBoat):
     #If there ain't shit to process, return nothing
     if diseaseBoat == []:
-        return []
+        return diseaseBoat
     else:
         #Return a list of sanitized dictionaries
         cleanShip = []
@@ -73,6 +74,7 @@ def authAccount(username, password):
     hidden = hashlib.sha256((password+account["salt"]).encode()).hexdigest()
     #If it matches, return True, authenticating the account
     if hidden == account["password"]:
+        # ??? Return a token cookie?
         return True
     #If it does not match, return False as the credentials do not authenticate.
     else:
@@ -202,44 +204,94 @@ def endGame(lobby):
 
 #Pulls the game dictionary from the lobby
 def pullGame(lobby):
+    lobbies = [1,2,3,4,5,6,7,8]
+    if lobby not in lobbies:
+        raise Exception("Lobby pulled that does not exist.")
     game = list(games.find({"id" : lobby}))
     game = sanitize(game[0])
     game = game["contents"]
     #Send this to the printer
     return game
 
-#This creates and serves a brand new XSRF token for a player with the account ID: The ID of a player database entry assigned to their account's authentication token.
+#This creates and serves a brand new authentication XSRF token for a player's username
 #Not at all stored on their player entries.
-def serveToken(tokenID):
-    #The token that will be assigned to the player's served HTML file and 
-    token = salt(64)
-    #Inserts the just created token into the validToken database with its corresponding token identification number (to be passed in through a hashed digit).
-    validTokens.insert_one({"id" : hash(tokenID), "token" : hash(token)})
-    #Returns the string of the newly created token to be sent to the HTML
-    return token
+def genAuthCookie(username):
+    #The cookie that will be assigned to the player's browser
+    cookie = salt(64)
+    #Inserts the just created cookie into the authCookies collection with its corresponding username
+    authCookies.insert_one({"username" : username, "cookie" : hashlib.sha256(cookie.encode('utf-8')).hexdigest()})
+    #Return the authenticated plaintext cookie
+    return cookie
 
-#Returns a True if the token is authenticated, a False if it is not.
-def authToken(id, token):
-    retrieveToken = list(validTokens.find({"id" : hash(id)}))
-    #If there is not existing token by that id:
-    if retrieveToken == []:
+#Returns a True if the authentication XSRF cookie is authenticated, a False if it is not.
+def authAuthCookie(cookie):
+    retrieveCookie = list(authCookies.find({"cookie" : hashlib.sha256(cookie.encode('utf-8')).hexdigest()}))
+    #If there is not existing cookie by that id:
+    if retrieveCookie == []:
         #Return false as the authentication failed.
         return False
-    #Retrieve the actual token (string)
-    retrieveToken = sanitize(retrieveToken[0])["token"]
-    #If the hashed token matches the hash on file:
-    if retrieveToken == hash(token):
-        #Return true as the authentication was successful
+    #Return the username associated with the cookie
+    return sanitize(retrieveCookie[0])["username"]
+
+#Return True if the cookie was deleted, return False otherwise
+def delAuthCookie(cookie):
+    #If the ID and the cookie match:
+    if authAuthCookie(cookie) == False:
+        return False
+    authCookies.delete_one({"cookie" : hashlib.sha256(cookie.encode('utf-8')).hexdigest()})
+    return True
+
+#Generate an XSRF token, put it in the database along with the username and return the token
+def genXSRFToken(username):
+    #Generate a 32-length token
+    token = salt(32)
+    #Store the xsrf token along with the username
+    xsrfTokens.insert_one({"username" : username, "token" : token})
+    #Pull the token
+    pullToken = list(xsrfTokens.find({"token" : token}))
+    if pullToken == []:
+        raise Exception("Database error in genXSRFToken")
+    #Return the newly created/pulled token 
+    return sanitize(pullToken[0])["token"]
+
+#Check to see if there are any xsrf tokens assigned to a username
+def touchXSRFToken(username):
+    #Pull all associated with the username
+    query = list(xsrfTokens.find({"username" : username}))
+    #If there are none, return -1
+    if query == []:
+        return -1
+    #If one exists, return the token
+    return sanitize(query[0])["token"]
+
+#Try and authenticate the token with the username  and plaintext token
+def authXSRFToken(username, token):
+    #Pull any and all entries by that token
+    query = list(xsrfTokens.find({"token" : token}))
+    #If none exist, return False
+    if query == []:
+        return False
+    #If one exists, pull the username
+    name = sanitize(query[0])["username"]
+    #If the usernames match, return True
+    if name == username:
         return True
-    #Otherwise return false as the authentication failed
+    #Otherwise, deny the authentication.
     return False
 
-#Return True if the token was deleted, return False otherwise
-def delToken(id, token):
-    #If the ID and the token match:
-    if not authToken(id, token):
+#Delete any xsrf tokens associated with a username
+def delXSRFToken(username):
+    tokens = list(xsrfTokens.find({"username" : username}))
+    #If there are no tokens associated iwth a username, return False as no deletion occured
+    if tokens == []:
         return False
-    validTokens.delete_one({"id" : hash(id)})
+    #Remove the _aids id
+    tokens = process(tokens)
+    #For every token associated with the username
+    for token in tokens:
+        #Delete the token
+        xsrfTokens.delete_one({"token" : token["token"]})
+    #Return true as deletion occured.
     return True
 
 #Returns win rank for the username
