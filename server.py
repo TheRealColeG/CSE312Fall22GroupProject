@@ -174,13 +174,13 @@ def send_report():
 def echo(ws): #final branch fix
     random_username = "User" + str(random.randint(0, 1000))
     status = json.loads(ws.receive())
-    # print(status)
+    print(status)
     if (status['socketMessage'] == "connected"):
         database.active_users[random_username] = ws
     elif (status['socketMessage'] == "close"):
         del database.active_users[random_username]
 
-    while ws.connected:
+    while True:
         data = ws.receive()
         data_received = json.loads(data)
         data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
