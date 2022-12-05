@@ -142,36 +142,14 @@ def pullLeaderboard():
 def move(lobby):
     print("This ran!!!", flush=True)
     #authenticate token here:
-
     try:
         lobby = int(lobby)
     except:
         print("Fraud detected.", flush=True)
         return redirect('/404', 301)
-    if request.method == 'POST':
-        command = NotImplemented #???
-        player = NotImplemented #??? Identify the username of the player that is sending the command
-        #Maybe do this ^^^ with authenticated XSRF token...? Sounds like a good idea.
 
-        if command == 'Roll':
-            roll = getRoll()
-            #websockets.pushTemplate() #Push the dice result
-            time.sleep(2) #Let the player read it before moving pieces
-
-            status = jack.sendMove(lobby, player, roll)
-            #If the player has to choose to buy/rent/etc.
-
-            #Not sure what's going on down here.
-            #if status == "Choice":
-                #websockets.pushTemplate() #Push the board to the same player and wait for a response
-
-        time.sleep(2)
-
-        gameTemplate = NotImplemented #???
-        return gameTemplate
-        
-    else:
-        raise Exception("Bad Request Method!")
+    # ??? add socket to something?
+    return render_template("leaderboardTEMPLATE.html")
 
 @app.route('/functions.js')
 def send_report():
