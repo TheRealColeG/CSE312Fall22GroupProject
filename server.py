@@ -123,8 +123,11 @@ def register():
         password = escape(request.form.get('password', ""))
         #if the username and password are valid
         if username != "" and password != "":
-            database.newAccount(username, password)
-            return redirect('/login', 301)
+            r = database.newAccount(username, password)
+            if r != -1:
+                return redirect('/login', 301)
+            else:
+                return render_template("registerpage.html")
         #If they are invalid
         else:
             return render_template("registerpage.html")
