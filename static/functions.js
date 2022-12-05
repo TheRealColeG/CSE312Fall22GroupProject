@@ -11,6 +11,10 @@ document.addEventListener("keypress", function (event) {
     }
 });
 
+window.onbeforeunload = function() {
+    socket.send(JSON.stringify({'socketMessage': "close"}));
+}
+
 // Read the comment the user is sending to chat and send it to the server over the WebSocket as a JSON string
 function sendMessage() {
     const chatBox = document.getElementById("chat-comment");

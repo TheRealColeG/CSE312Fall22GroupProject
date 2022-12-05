@@ -188,19 +188,16 @@ def echo(ws): #final branch fix
     # print(status)
     if (status['socketMessage'] == "connected"):
         database.active_users[random_username] = ws
-    elif (status['socketMessage'] == "close"):
-        del database.active_users[random_username]
 
-    while ws.connected:
+    while True:
         data = ws.receive()
         data_received = json.loads(data)
+        if (data_received.get('socketMessage') and data_received['socketMessage'] == 'close'):
+            del database.active_users[random_username]
+            break
         data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
-        # ws.send(json.dumps(data_to_send))
         for user in database.active_users:
-            try:
-                database.active_users[user].send(json.dumps(data_to_send))
-            except:
-                continue
+            database.active_users[user].send(json.dumps(data_to_send))
 
 # DON'T CHANGE THIS!
 if __name__ == "__main__":
