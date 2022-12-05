@@ -177,6 +177,6 @@ def echo(ws): #final branch fix
         for user in database.active_users:
             database.active_users[user].send(json.dumps(data_to_send))
 
-# DON'T CHANGE THIS!
+# DON'T CHANGE THIS! #
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
