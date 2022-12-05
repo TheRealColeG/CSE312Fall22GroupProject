@@ -21,6 +21,9 @@ authCookies = db["auth-cookies"]
 #Valid XSRF tokens for the useres (16/32 bytes each)
 xsrfTokens = db["xsrf-tokens"]
 
+# Testing 
+active_users = {} 
+
 #If there are no accounts created
 if "names" not in db.list_collection_names():
     takenNames.insert_one({"names" : []})

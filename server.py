@@ -159,21 +159,26 @@ def send_report():
 def send_error():
     return render_template("404-bitchery.html")
 
+@app.route("/gameplayTEMPLATE", methods=["GET"])
+def check_connection():
+    return render_template("gameplayTEMPLATE.html")
+
 @sock.route('/websocket') # can be dynamically changed
 def echo(ws): 
     random_username = "User" + str(random.randint(0, 1000))
     status = json.loads(ws.receive())
-    # print(status)
+    print(status)
     if (status['socketMessage'] == "connected"):
         database.active_users[random_username] = ws
-
     while True:
         data = ws.receive()
         data_received = json.loads(data)
+        print(data_received)
         if (data_received.get('socketMessage') and data_received['socketMessage'] == 'close'):
-            del database.active_users[random_username]
-            break
-        data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
+                del database.active_users[random_username]
+                break
+        # data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
+        data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
         for user in database.active_users:
             database.active_users[user].send(json.dumps(data_to_send))
 
