@@ -11,6 +11,13 @@ def startGame(lobby, usernames):
     database.setGame(lobby, game)
     return game["status"]
 
+def authTurn(lobby, orientation):
+    game = database.pullGame(lobby)
+    turn = game["status"][0]
+    if turn == orientation:
+        return True
+    return False
+
 #
 def sendMove(lobby, player, roll):
     game = database.pullGame(lobby)
@@ -53,8 +60,7 @@ def pullBoard(lobby):
     game = database.pullGame(lobby)
     if game == 0:
         raise Exception("No game available.")
-    board = game["board"]
-    return json.dumps(board)
+    return json.dumps(game["board"])
 
 def pullPlayerList(lobby):
     game = database.pullGame(lobby)

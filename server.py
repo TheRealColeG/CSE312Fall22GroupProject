@@ -38,19 +38,17 @@ def change_password():
     username = escape(request.form.get('username', ""))
     password = escape(request.form.get('cur-password', ""))
     newPassword = escape(request.form.get('new-password', ""))
-    print("Test case:\nThe username is: "+str(username)+", the 'old' password is: "+str(password)+", and the requested new-password is: "+str(newPassword)+". ", flush=True)
-    #TODO - Check if user entered any data/same password/etc.
     truth = database.changePassword(username, password, newPassword)
     if truth:
         return redirect('/login', 301)
     else:
-        return "Failure!"
+        return redirect('/404', 301)
 
-@app.route('/user/<username>')
-def show_user_profile(username):
+#@app.route('/user/<username>')
+#def show_user_profile(username):
     # show the user profile for that user
-   username = escape(username)
-   return render_template_string(templator.servePublicUserProfileHTML(username))
+#   username = escape(username)
+#   return render_template_string(templator.servePublicUserProfileHTML(username))
 
 # Using GET and POST requests for same page
 
