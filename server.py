@@ -160,7 +160,7 @@ def send_error():
     return render_template("404-bitchery.html")
 
 @sock.route('/websocket') # can be dynamically changed
-def echo(ws): #final branch fix
+def echo(ws): 
     random_username = "User" + str(random.randint(0, 1000))
     status = json.loads(ws.receive())
     # print(status)
