@@ -77,7 +77,7 @@ def lookup():
     #if the user is looking up THEIR OWN LOGGED IN PROFILE
     else:
         #Pull the cookie
-        authCookie = escape(request.cookies.get('auth'))
+        authCookie = str(escape(request.cookies.get('auth')))
         #Auth the cookie and gain the username
         username = database.authAuthCookie(str(authCookie))
         if username != False:
@@ -132,22 +132,23 @@ def register():
         else:
             return render_template("registerpage.html")
 
-# For use for authentication+player move in the game
-@app.route('/gameplay/<lobby>', methods=['POST'])
-def move(lobby):
+@app.route("/leaderboard", methods=['GET'])
+def pullLeaderboard():
+    html = templator.serveLeaderboardHTML()
+    return html
 
+#For use in starting games
+@app.route('/gameplay/<lobby>', methods=['GET'])
+def move(lobby):
+    print("This ran!!!", flush=True)
     #authenticate token here:
 
     try:
         lobby = int(lobby)
     except:
         print("Fraud detected.", flush=True)
+        return redirect('/404', 301)
     if request.method == 'POST':
-        #I don't know what this is:
-        with app.test_request_context('/gameplay', 'POST'):
-            assert request.path == '/gameplay'
-
-
         command = NotImplemented #???
         player = NotImplemented #??? Identify the username of the player that is sending the command
         #Maybe do this ^^^ with authenticated XSRF token...? Sounds like a good idea.
@@ -175,6 +176,10 @@ def move(lobby):
 @app.route('/functions.js')
 def send_report():
     return send_from_directory('static', 'functions.js')
+
+@app.route('/404')
+def send_error():
+    return render_template("404-bitchery.html")
 
 @sock.route('/websocket') # can be dynamically changed
 def echo(ws): #final branch fix

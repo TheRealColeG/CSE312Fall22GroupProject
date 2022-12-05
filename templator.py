@@ -33,6 +33,7 @@ def serveLeaderboardHTML():
     winLeaderboard = database.pullWinsLeaderboard()
     balanceLeaderboard = database.pullBalLeaderboard()
 
+    # ??? If no leaderboards exist for the win/bal columns...?
     if winLeaderboard == -1:
         NotImplemented
     if balanceLeaderboard == -1:
