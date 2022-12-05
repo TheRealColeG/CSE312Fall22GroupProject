@@ -134,8 +134,11 @@ def register():
 
 @app.route("/leaderboard", methods=['GET'])
 def pullLeaderboard():
-    html = templator.serveLeaderboardHTML()
-    return html
+    template = templator.serveLeaderboardHTML()
+    if template == -1:
+        return render_template("leaderboardunavailable.html")
+    else:
+        return template
 
 #For use in starting games
 @app.route('/gameplay/<lobby>', methods=['GET'])

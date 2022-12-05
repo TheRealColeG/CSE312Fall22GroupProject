@@ -20,6 +20,12 @@ takenNames = db["names"]
 authCookies = db["auth-cookies"]
 #Valid XSRF tokens for the useres (16/32 bytes each)
 xsrfTokens = db["xsrf-tokens"]
+#Reflects the status of the database (What can be touched/pulled?)
+status = db["status"]
+
+#Initially no players exist
+if "status" not in db.list_collection_names():
+    status.insert_one({"status" : False})
 
 #If there are no accounts created
 if "names" not in db.list_collection_names():
@@ -39,6 +45,10 @@ if "games" not in db.list_collection_names():
 #If no entries have been created yet, set the first available ID to 0
 if "identification" not in db.list_collection_names():
     ids.insert_one({"current" : 0})
+
+#Returns true if accounts exist, false otherwise.
+def pullStatus():
+    return sanitize(list(status.find({}))[0])["status"]
 
 #Sanitizes a LIST of dictionaries, removing the aids mongo _id from everything
 def process(diseaseBoat):
@@ -94,6 +104,7 @@ def salt(i):
 #If the username is available, it will create a new player character and return the sanitized dictionary
 #If not, it will return -1
 def newAccount(username, password):
+    status.update_one({"status" : False}, {"$set" : {"status" : True}})
     #The list of taken names
     copy = list(takenNames.find({}))[0]["names"]
     names = copy
