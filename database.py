@@ -27,6 +27,9 @@ status = db["status"]
 if "status" not in db.list_collection_names():
     status.insert_one({"status" : False})
 
+# Testing 
+active_users = {} 
+
 #If there are no accounts created
 if "names" not in db.list_collection_names():
     takenNames.insert_one({"names" : []})

@@ -159,24 +159,30 @@ def send_report():
 def send_error():
     return render_template("404-bitchery.html")
 
-@sock.route('/websocket') # can be dynamically changed
-def echo(ws): #final branch fix
-    random_username = "User" + str(random.randint(0, 1000))
-    status = json.loads(ws.receive())
-    # print(status)
-    if (status['socketMessage'] == "connected"):
-        database.active_users[random_username] = ws
+@app.route("/gameplayTEMPLATE", methods=["GET"])
+def check_connection():
+    return render_template("gameplayTEMPLATE.html")
 
-    while True:
-        data = ws.receive()
+@sock.route('/websocket') # can be dynamically changed
+def echo(ws): 
+    random_username = "User" + str(random.randint(0, 1000))
+    while ws.connected: 
+        data = ws.receive(timeout=0)
+        if not data:
+            continue
         data_received = json.loads(data)
-        if (data_received.get('socketMessage') and data_received['socketMessage'] == 'close'):
+        if (data_received.get('socketMessage') and data_received['socketMessage'] == "connected"):
+            database.active_users[random_username] = ws
+        elif (data_received.get('socketMessage') and data_received['socketMessage'] == 'close'):
             del database.active_users[random_username]
-            break
-        data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
+        # data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
+        data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
         for user in database.active_users:
-            database.active_users[user].send(json.dumps(data_to_send))
+            try:
+                database.active_users[user].send(json.dumps(data_to_send))
+            except:
+                break
 
 # DON'T CHANGE THIS! #
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(host="0.0.0.0", port=8080)

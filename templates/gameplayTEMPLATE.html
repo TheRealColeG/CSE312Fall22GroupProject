@@ -9,6 +9,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <link rel="stylesheet" type="text/css" href="style.css">
+  <link href="{{ url_for('static', filename='functions.js') }}"/>
 </head>
 
 <style>
@@ -60,6 +61,13 @@ table, th, td {
         <p><a href="http://localhost:8080/leaderboard">View Leaderboard</a></p>
         <p><a href="http://localhost:8080/login">Login</a></p>
         <p><a href="http://localhost:8080/register">Create Account</a></p>
+        <!-- <p><a href="#">Member one</a></p>
+        <p><a href="#">Member two</a></p>
+        <p><a href="#">Member three</a></p> -->
+        <div id="reflectConnections">
+          
+
+        </div>
       </div>
       <div class="col-sm-7">
         <!--Replace this with the score/grades. Kick out avatar unless you want the icon there. Maybe a good spot for the icon of the player if we want to implement it.-->
@@ -86,6 +94,12 @@ table, th, td {
     <p>Developed by Julius Merlino, Cole Grabenstatter, Buu Lam, Ziqian Yang, Songzhu Li for the Final Project in CSE312
       with Dr. Jesse Hartloff</p>
   </footer>
+
+  <!-- <script>
+    // Establish a WebSocket connection with the server
+    const socket = new WebSocket('ws://' + window.location.host + '/websocket');
+  </script> -->
+  <script src="functions.js"></script>
 
 </body>
 
