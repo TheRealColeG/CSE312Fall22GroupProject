@@ -171,12 +171,19 @@ def echo(ws):
         if not data:
             continue
         data_received = json.loads(data)
-        if (data_received.get('socketMessage') and data_received['socketMessage'] == "connected"):
-            database.active_users[random_username] = ws
-        elif (data_received.get('socketMessage') and data_received['socketMessage'] == 'close'):
-            del database.active_users[random_username]
-        # data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
-        data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
+        data_to_send = {}
+        if data_received.get('socketMessage'):
+            if (data_received['socketMessage'] == "connected"):
+                database.active_users[random_username] = ws
+            elif (data_received['socketMessage'] == 'close'):
+                del database.active_users[random_username]
+            data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
+            if (len(database.active_users) <= 0):
+                break
+        else:
+            if data_received.get('boardUpdateRequest'): # replace "BOARD UPDATED!" with the pre-rendered html file
+                data_to_send = {'messageType': 'boardUpdateRequest', 'board': "BOARD UPDATED!"}
+        # print(data_to_send)
         for user in database.active_users:
             try:
                 database.active_users[user].send(json.dumps(data_to_send))

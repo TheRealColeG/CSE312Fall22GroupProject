@@ -81,15 +81,16 @@ def printer(lobby):
                     replacement = str(replacement+username+"\n")
                 copy = copy.replace(str(string), replacement)
     
-    #return copy#json.dumps(copy)
+    return copy#json.dumps(copy)
 
-    ret_val = ""
-    file = open("templates/gameplayTEMPLATE.html", 'r')
-    for line in file:
-        for char in line:
-            ret_val = ret_val + str(char)
-    file.close()
-    return json.dumps(ret_val.replace("@@@", copy))
+    # Julius' code, main branch has the below uncomment
+    # ret_val = ""
+    # file = open("templates/gameplayTEMPLATE.html", 'r')
+    # for line in file:
+    #     for char in line:
+    #         ret_val = ret_val + str(char)
+    # file.close()
+    # return json.dumps(ret_val.replace("@@@", copy))
 
 #Will return a String containing the html for a user profile under the input username (string)
 def servePublicUserProfileHTML(username):
