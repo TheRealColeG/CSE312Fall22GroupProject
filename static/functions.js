@@ -47,7 +47,7 @@ function addMessage(chatMessage) {
 // Renders when a new user connect to the page
 function reflectConnections(users) { // user is a javascript map/dictionary
     let connection_count = document.getElementById('reflectConnections');
-    connection_count.innerHTML += "<b>" + "Users connected" + "</b>: " + users.user_count + "<br/>";
+    connection_count.innerHTML = "<b>" + "Users connected" + "</b>: " + users.user_count + "<br/>";
 }
 
 socket.onopen = function(event) {
