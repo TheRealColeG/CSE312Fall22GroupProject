@@ -1,6 +1,4 @@
 "use strict";
-// Establish a WebSocket connection with the server
-const socket = new WebSocket('ws://' + window.location.host + '/websocket');
 
 // const socket = new WebSocket(wsProtocol + "://" + location.host + "/websocket/{{ username }}");
 

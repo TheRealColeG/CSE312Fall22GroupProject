@@ -294,6 +294,10 @@ table, th, td {
       with Dr. Jesse Hartloff</p>
   </footer>
 
+  <script>
+    // Establish a WebSocket connection with the server
+    const socket = new WebSocket('ws://' + window.location.host + '/websocket/{{ lobby_id }}');
+  </script>
   <script src="functions.js"></script>
 
 </body>

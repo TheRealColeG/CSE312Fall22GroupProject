@@ -171,7 +171,6 @@ def echo(ws):
         if not data:
             continue
         data_received = json.loads(data)
-        print(data_received)
         if (data_received.get('socketMessage') and data_received['socketMessage'] == "connected"):
             database.active_users[random_username] = ws
         elif (data_received.get('socketMessage') and data_received['socketMessage'] == 'close'):
