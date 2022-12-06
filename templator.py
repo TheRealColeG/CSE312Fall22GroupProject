@@ -17,7 +17,9 @@ def computeBoard(lobby):
         ret_val.append(entry)
     return ret_val
 
-def printer(properties, game):
+def printer(lobby):
+    game = database.pullGame(lobby)
+    properties = computeBoard(lobby)
     ret_val = ""
     html = open("cole-code/monopoly.html", 'r')
     for line in html:
@@ -79,8 +81,16 @@ def printer(properties, game):
                     replacement = str(replacement+username+"\n")
                 copy = copy.replace(str(string), replacement)
     
-    return json.dumps(copy)
-  
+    #return copy#json.dumps(copy)
+
+    ret_val = ""
+    file = open("templates/gameplayTEMPLATE.html", 'r')
+    for line in file:
+        for char in line:
+            ret_val = ret_val + str(char)
+    file.close()
+    return json.dumps(ret_val.replace("@@@", copy))
+
 #Will return a String containing the html for a user profile under the input username (string)
 def servePublicUserProfileHTML(username):
     information = database.playerDetails(username)
@@ -147,10 +157,10 @@ def serveLeaderboardHTML():
 """  
 if __name__ == "__main__":
     game = api.initGame(["Julius", "Edward", "Merlino"])
-    game = api.move(game, game["players"][1], 1)
+    #game = api.move(game, game["players"][1], 1)
     obj = api.initBoard()
     obj = computeBoard(obj)
-    html = htmlcreator(obj, game)
+    html = printer(obj, game)
     file = open("delete.html", 'w')
     file.write(html)
     file.close()
