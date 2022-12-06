@@ -60,15 +60,6 @@ def buyProperty(property, player):
 	property["houseCount"] = 0
 	return property
 
-#When a player leaves a property update the player count
-def playerExitProperty(property, player):
-	if player["username"] in property["occupying"]:
-		property["occupying"] = property["occupying"].remove(player["username"])
-		return property
-	#If a mistake was made
-	else:
-		raise Exception("FUCKUP!!! playerExitProperty() was ran on a property not containing that player!")
-
 #Reverses the mortgage status of a property when called
 def mortgageProperty(property):
 	property["mortgageStatus"] = not property["mortgageStatus"]
@@ -87,26 +78,19 @@ def initGame(usernames):
 	game = {}
 	#Initializes the monopoly board
 	game["board"] = initBoard()
-	print("Mein!"+str(type(game["board"][0]["occupying"])))
 	#This will be a list of player objects in the order of their gameplay.
 	players = []
-	i = 0
+	i = 1
 	#For every username in the list, create and add the player objects
 	for username in usernames:
-		players.append(initPlayer(username, i+1))
+		players.append(initPlayer(username, i))
 		i = i + 1
 	game["players"] = players
 	#Adds the players to the GO space.
-	occupyList = game["board"][0]["occupying"]
+	occupyList = []
 	for player in players:
-		print("my data:"+str(type(player["username"])))
-		if occupyList == []:
-			occupyList = [player["username"]]
-		elif occupyList != [] and player["username"] not in occupyList:
-			occupyList = occupyList.append(player["username"])
-		
-		#playerEnterProperty(game["board"][0]["occupying"], player)
-		game["board"][0]["occupying"] = occupyList
+		occupyList.append(player["username"])
+	game["board"][0]["occupying"] = occupyList
 	#A list of player dictionaries that have been kicked out of the game due to bankruptcy (No one because everybody starts with money).
 	game["bankrupted"] = []
 	#Set the game status to "Roll", requiring the current orientation to be rolling the dice.
@@ -169,8 +153,22 @@ def move(game, player, roll):
 	#If the property is a buyable asset
 	if lodging["baseCost"] != None:
 		#Move the character and send the choice to 
-		currentBoard[currentLocation] = playerExitProperty(currentBoard[currentLocation], player)
-		currentBoard[newLocation] = playerEnterProperty(currentBoard[newLocation], player)
+		curOccupying = currentBoard[currentLocation]["occupying"]
+		res = []
+		if len(curOccupying) > 0:
+			for occupier in curOccupying:
+				if occupier != player["username"]:
+					res.append(occupier)
+		currentBoard[currentLocation]["occupying"] = res
+		#
+		newOccupying = currentBoard[newLocation]["occupying"]
+		res = []
+		if len(newOccupying) > 0:
+			for occupier in newOccupying:
+				res.append(occupier)
+		res.append(player["username"])
+		currentBoard[newLocation]["occupying"] = res
+
 		player["location"] = newLocation
 		
 		#If the property is owned
@@ -185,8 +183,27 @@ def move(game, player, roll):
 	#If the property is a blank slate
 	else:
 		if lodging["name"] == "BLANK" or lodging["name"] == "GO" or lodging["name"] == "FREE PARKING" or lodging["name"] == "JAIL":
-			currentBoard[currentLocation] = playerExitProperty(currentBoard[currentLocation], player)
-			currentBoard[newLocation] = playerEnterProperty(currentBoard[newLocation], player)
+			#currentBoard[currentLocation] = playerExitProperty(currentBoard[currentLocation], player)
+			#currentBoard[newLocation] = playerEnterProperty(currentBoard[newLocation], player)
+
+
+			curOccupying = currentBoard[currentLocation]["occupying"]
+			res = []
+			if len(curOccupying) > 0:
+				for occupier in curOccupying:
+					if occupier != player["username"]:
+						res.append(occupier)
+			currentBoard[currentLocation]["occupying"] = res
+			#
+			newOccupying = currentBoard[newLocation]["occupying"]
+			res = []
+			if len(newOccupying) > 0:
+				for occupier in newOccupying:
+					res.append(occupier)
+			res.append(player["username"])
+			currentBoard[newLocation]["occupying"] = res
+
+
 			player["location"] = newLocation
 			#Move the turn on
 			game = changeTurn(game, player["order"], len(game["players"]))
@@ -301,7 +318,6 @@ def initBoard():
 		elif i == 0 or i == 2 or i == 4 or i == 5 or i == 7 or i == 10 or i == 12 or i == 15 or i == 17 or i == 20 or i == 22 or i == 25 or i == 28 or i == 30 or i == 33 or i == 35 or i == 36 or i == 38:
 			#If the property is GO
 			if i == 0:
-				print("yiiip! gO created!")
 				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
 				ret_val[i] = initProperty("GO", None, None, None, 0, None, None, [], None)
 			#If the property is the JAIL

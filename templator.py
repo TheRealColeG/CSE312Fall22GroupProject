@@ -1,8 +1,9 @@
-#import database
+import database
 from monopoly import api
+import json
 
-def computeBoard(board):
-    #board = None#database.pullGame(lobby)["board"]
+def computeBoard(lobby):
+    board = database.pullGame(lobby)["board"]
     ret_val = []
     empties = ["ARREST", "FREE PARKING", "JAIL", "GO"]
     for property in board:
@@ -16,7 +17,7 @@ def computeBoard(board):
         ret_val.append(entry)
     return ret_val
 
-def htmlcreator(properties):
+def printer(properties, game):
     ret_val = ""
     html = open("cole-code/monopoly.html", 'r')
     for line in html:
@@ -43,6 +44,22 @@ def htmlcreator(properties):
             else:
                 copy = copy.replace(string, (str(property[0])+'\n'+str(property[1])+'\n'+str(property[2])))
 
+    locations = {}
+    for i in range(40):
+        locations[i] = []
+    players = game["players"]
+    for player in players:
+        i = player["location"]
+        if locations[i] == []:
+            locations[i] = [player["username"]]
+        else:
+            krakatoa = locations[i]
+            res = []
+            for member in krakatoa:
+                res.append(member)
+            res.append(player["username"])
+            locations[i] = res
+
     for i in range(len(ret_val)):
         if ret_val[i] == '[' and i != 0 and (ret_val[i] == ret_val[i-1]):
             j = i + 1
@@ -51,17 +68,19 @@ def htmlcreator(properties):
             else:
                 index = int(ret_val[slice(j, j+2)])
             string = "["+"["+str(index)+"]"+"]"
-            #(property["name"], property["baseCost"], property["currentOwner"])
-            property = properties[index]
-            if property[0] == -1:
+            #
+            if locations[index] == []:
                 copy = copy.replace(string, "")
-            elif property[2] == -1:
-                copy = copy.replace(string, property[0])
+            elif len(locations[index]) == 1:
+                copy = copy.replace(string, locations[index][0])
             else:
-                copy = copy.replace(string, (str(property[0])+'\n'+str(property[1])+'\n'+str(property[2])))
+                replacement = ""
+                for username in locations[index]:
+                    replacement = str(replacement+username+"\n")
+                copy = copy.replace(str(string), replacement)
     
-    return copy
-"""   
+    return json.dumps(copy)
+  
 #Will return a String containing the html for a user profile under the input username (string)
 def servePublicUserProfileHTML(username):
     information = database.playerDetails(username)
@@ -128,9 +147,11 @@ def serveLeaderboardHTML():
 """  
 if __name__ == "__main__":
     game = api.initGame(["Julius", "Edward", "Merlino"])
+    game = api.move(game, game["players"][1], 1)
     obj = api.initBoard()
     obj = computeBoard(obj)
-    html = htmlcreator(obj)
+    html = htmlcreator(obj, game)
     file = open("delete.html", 'w')
     file.write(html)
     file.close()
+"""
