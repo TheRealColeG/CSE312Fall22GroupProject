@@ -1,0 +1,27 @@
+table{
+    border: 5px solid black;
+    table-layout: fixed;
+}
+
+th {
+    font-size: 48px;
+    width: 8%;
+}
+
+td {
+    width: 60px;
+    height: 60px;
+}
+
+.EMPTY {
+    color: white
+}
+
+.meme {
+    border: 1px solid black;
+}
+
+button {
+    width: 100px;
+    margin-left: 12%;
+}

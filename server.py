@@ -105,7 +105,6 @@ def login():
                 return res
             else:
                 print("Login failure!", flush=True)
-                #TODO - Maybe edit the HTML here? Some sort of error message?
                 return render_template("loginpage.html")
         else:
             return render_template("loginpage.html")
