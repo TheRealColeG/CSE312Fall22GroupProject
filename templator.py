@@ -6,13 +6,10 @@ def computeBoard(board):
     ret_val = []
     empties = ["ARREST", "FREE PARKING", "JAIL", "GO"]
     for property in board:
-        print("type!!!"+str(type(property)))
-        print(property)
         entry = None
-        print(type(property))
         if property["name"] == "BLANK":
             entry = (-1, -1, -1)
-        if property["name"] not in empties:
+        elif property["name"] not in empties:
             entry = (property["name"], property["baseCost"], property["currentOwner"])
         else:
             entry = (property["name"], -1, -1)
@@ -30,15 +27,13 @@ def htmlcreator(properties):
     copy = ret_val
     
     for i in range(len(ret_val)):
-        print(ret_val[i] + ' '+ str(i))
-        if ret_val[i] == '[' and (ret_val[i] == ret_val[i-1]):
-            #print(ret_val[i] + ' '+ str(i))
+        if ret_val[i] == '{' and i != 0 and (ret_val[i] == ret_val[i-1]):
             j = i + 1
-            if ret_val[j+1] == ']':
+            if ret_val[j+1] == '}':
                 index = int(ret_val[j])
             else:
                 index = int(ret_val[slice(j, j+2)])
-            string = "[["+str(index)+"]]"
+            string = "{"+"{"+str(index)+"}"+"}"
             #(property["name"], property["baseCost"], property["currentOwner"])
             property = properties[index]
             if property[0] == -1:
@@ -46,8 +41,24 @@ def htmlcreator(properties):
             elif property[2] == -1:
                 copy = copy.replace(string, property[0])
             else:
-                print(index)
-                copy = copy.replace(string, (str(property[0]+'\n'+property[1]+'\n'+property[2])))
+                copy = copy.replace(string, (str(property[0])+'\n'+str(property[1])+'\n'+str(property[2])))
+
+    for i in range(len(ret_val)):
+        if ret_val[i] == '[' and i != 0 and (ret_val[i] == ret_val[i-1]):
+            j = i + 1
+            if ret_val[j+1] == ']':
+                index = int(ret_val[j])
+            else:
+                index = int(ret_val[slice(j, j+2)])
+            string = "["+"["+str(index)+"]"+"]"
+            #(property["name"], property["baseCost"], property["currentOwner"])
+            property = properties[index]
+            if property[0] == -1:
+                copy = copy.replace(string, "")
+            elif property[2] == -1:
+                copy = copy.replace(string, property[0])
+            else:
+                copy = copy.replace(string, (str(property[0])+'\n'+str(property[1])+'\n'+str(property[2])))
     
     return copy
 """   
@@ -117,4 +128,8 @@ def serveLeaderboardHTML():
 """  
 if __name__ == "__main__":
     obj = api.initBoard()
-    htmlcreator(computeBoard(obj))
+    obj = computeBoard(obj)
+    html = htmlcreator(obj)
+    file = open("delete.html", 'w')
+    file.write(html)
+    file.close()

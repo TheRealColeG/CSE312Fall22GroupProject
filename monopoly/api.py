@@ -282,7 +282,7 @@ def initBoard():
 		#If the iteration is on the first property it will fill in all the property elements immediately because there will be 20/22.
 		if i == 1:
 			#Open the csv file and read from there.
-			with open('properties.csv', mode='r') as file:
+			with open('monopoly/properties.csv', mode='r') as file:
 				properties = csv.reader(file)
 				#1 is the first index of hte first monopoly property.
 				index = 0
@@ -290,36 +290,35 @@ def initBoard():
 				for property in properties:
 					#If there IS a next index, map the element to a newly created property object having the attributes in that csv file.
 					if index != 0:
-						print(property)
 						#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
-						ret_val[index] = initProperty(property[0], float(property[1]), float(property[2]), float(property[3]), (float(property[4]), float(property[5]), float(property[6]), float(property[7]), float(property[8]), float(property[9])), None, 0, [], False)
+						ret_val[index] = initProperty(str(property[0]), float(property[1]), float(property[2]), float(property[3]), (float(property[4]), float(property[5]), float(property[6]), float(property[7]), float(property[8]), float(property[9])), None, 0, [], False)
+						index = translate(index)
+					else:
+						index = 1
 					#This maps a board array index to the NEXT board array index which points to the NEXT property piece.
-					index = translate(index)
+					
 		#If the iteration is not supposed to be a property
 		elif i == 0 or i == 2 or i == 4 or i == 5 or i == 7 or i == 10 or i == 12 or i == 15 or i == 17 or i == 20 or i == 22 or i == 25 or i == 28 or i == 30 or i == 33 or i == 35 or i == 36 or i == 38:
 			#If the property is GO
 			if i == 0:
 				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
-				ret_val[i] = initProperty("GO", None, None, None, 0, None, None, 0, None)
+				ret_val[i] = initProperty("GO", None, None, None, 0, None, None, [], None)
 			#If the property is the JAIL
 			elif i == 10:
 				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
-				ret_val[i] = initProperty("JAIL", None, None, None, 0, 0, None, 0, None)
+				ret_val[i] = initProperty("JAIL", None, None, None, 0, 0, None, [], None)
 			#If the property is FREE PARKING
 			elif i == 20:
 				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
-				ret_val[i] = initProperty("FREE PARKING", None, None, None, 0, 0, None, 0, None)
+				ret_val[i] = initProperty("FREE PARKING", None, None, None, 0, 0, None, [], None)
 			#If the POLICE have caught player
 			elif i == 30:
 				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
-				ret_val[i] = initProperty("ARREST", None, None, None, 0, 0, None, 0, None)
+				ret_val[i] = initProperty("ARREST", None, None, None, 0, 0, None, [], None)
 			#If the piece is a blank slate
 			else:
 				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
-				ret_val[i] = initProperty("BLANK", None, None, None, 0, 0, None, 0, None)
+				ret_val[i] = initProperty("BLANK", None, None, None, 0, 0, None, [], None)
 				#initProperty(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
 	#ret_val is now a starter monopoly board
 	return ret_val
-
-if __name__ == "__main__":
-	initBoard()
