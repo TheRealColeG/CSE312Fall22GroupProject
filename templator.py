@@ -127,6 +127,7 @@ def serveLeaderboardHTML():
     return ret_val 
 """  
 if __name__ == "__main__":
+    game = api.initGame(["Julius", "Edward", "Merlino"])
     obj = api.initBoard()
     obj = computeBoard(obj)
     html = htmlcreator(obj)

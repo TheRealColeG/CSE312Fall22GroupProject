@@ -60,15 +60,6 @@ def buyProperty(property, player):
 	property["houseCount"] = 0
 	return property
 
-#Changes the occupying number of people when a player is sitting on the property
-def playerEnterProperty(property, player):
-	if player["username"] not in property["occupying"]:
-		property["occupying"] = property["occupying"].append(player["username"])
-		return property
-	#If a mistake was made
-	else:
-		raise Exception("FUCKUP!!! playerEnterProperty() was ran on a property already containing that player!")
-
 #When a player leaves a property update the player count
 def playerExitProperty(property, player):
 	if player["username"] in property["occupying"]:
@@ -96,6 +87,7 @@ def initGame(usernames):
 	game = {}
 	#Initializes the monopoly board
 	game["board"] = initBoard()
+	print("Mein!"+str(type(game["board"][0]["occupying"])))
 	#This will be a list of player objects in the order of their gameplay.
 	players = []
 	i = 0
@@ -105,8 +97,16 @@ def initGame(usernames):
 		i = i + 1
 	game["players"] = players
 	#Adds the players to the GO space.
+	occupyList = game["board"][0]["occupying"]
 	for player in players:
-		game["board"][0] = playerEnterProperty(game["board"][0], player)
+		print("my data:"+str(type(player["username"])))
+		if occupyList == []:
+			occupyList = [player["username"]]
+		elif occupyList != [] and player["username"] not in occupyList:
+			occupyList = occupyList.append(player["username"])
+		
+		#playerEnterProperty(game["board"][0]["occupying"], player)
+		game["board"][0]["occupying"] = occupyList
 	#A list of player dictionaries that have been kicked out of the game due to bankruptcy (No one because everybody starts with money).
 	game["bankrupted"] = []
 	#Set the game status to "Roll", requiring the current orientation to be rolling the dice.
@@ -301,6 +301,7 @@ def initBoard():
 		elif i == 0 or i == 2 or i == 4 or i == 5 or i == 7 or i == 10 or i == 12 or i == 15 or i == 17 or i == 20 or i == 22 or i == 25 or i == 28 or i == 30 or i == 33 or i == 35 or i == 36 or i == 38:
 			#If the property is GO
 			if i == 0:
+				print("yiiip! gO created!")
 				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
 				ret_val[i] = initProperty("GO", None, None, None, 0, None, None, [], None)
 			#If the property is the JAIL
