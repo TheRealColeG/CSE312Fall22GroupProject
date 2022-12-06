@@ -46,6 +46,9 @@ def initProperty(title, cost, mortgage, house, rents, owner, houses, occupied, m
 	property["houseCount"] = houses
 	property["occupying"] = occupied
 	property["mortgageStatus"] = mortgaged
+
+	#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
+	#ret_val[i] = initProperty("FREE PARKING", None, None, None, 0, 0, None, 0, None)
 	return property
 
 #Changes the ownership of the property when it is bought
@@ -264,6 +267,7 @@ def translate(i):
 	return 0
 
 #Returns a board with the set in stone properties.
+
 def initBoard():
 	#A 1D List is contained with each element being a Property. Index 0 points to Go, index 10 points to JAIL, index 20 points to FREE PARKING, index 30 point to ARREST.
 	ret_val = []
@@ -281,14 +285,14 @@ def initBoard():
 			with open('properties.csv', mode='r') as file:
 				properties = csv.reader(file)
 				#1 is the first index of hte first monopoly property.
-				index = 1
+				index = 0
 				#For every property
 				for property in properties:
 					#If there IS a next index, map the element to a newly created property object having the attributes in that csv file.
 					if index != 0:
+						print(property)
 						#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
 						ret_val[index] = initProperty(property[0], float(property[1]), float(property[2]), float(property[3]), (float(property[4]), float(property[5]), float(property[6]), float(property[7]), float(property[8]), float(property[9])), None, 0, [], False)
-					
 					#This maps a board array index to the NEXT board array index which points to the NEXT property piece.
 					index = translate(index)
 		#If the iteration is not supposed to be a property
@@ -312,6 +316,10 @@ def initBoard():
 			#If the piece is a blank slate
 			else:
 				#(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
-				ret_val[i] = initProperty("BLANK", None, None, None, 0, 0, None, 0, None, None)
+				ret_val[i] = initProperty("BLANK", None, None, None, 0, 0, None, 0, None)
+				#initProperty(title, cost, mortgage, house, rents, owner, houses, occupied, mortgaged)
 	#ret_val is now a starter monopoly board
 	return ret_val
+
+if __name__ == "__main__":
+	initBoard()

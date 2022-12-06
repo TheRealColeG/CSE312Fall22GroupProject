@@ -1,5 +1,56 @@
-import database
+#import database
+from monopoly import api
 
+def computeBoard(board):
+    #board = None#database.pullGame(lobby)["board"]
+    ret_val = []
+    empties = ["ARREST", "FREE PARKING", "JAIL", "GO"]
+    for property in board:
+        print("type!!!"+str(type(property)))
+        print(property)
+        entry = None
+        print(type(property))
+        if property["name"] == "BLANK":
+            entry = (-1, -1, -1)
+        if property["name"] not in empties:
+            entry = (property["name"], property["baseCost"], property["currentOwner"])
+        else:
+            entry = (property["name"], -1, -1)
+        ret_val.append(entry)
+    return ret_val
+
+def htmlcreator(properties):
+    ret_val = ""
+    html = open("cole-code/monopoly.html", 'r')
+    for line in html:
+        for char in line:
+            ret_val = ret_val + str(char)
+    html.close
+
+    copy = ret_val
+    
+    for i in range(len(ret_val)):
+        print(ret_val[i] + ' '+ str(i))
+        if ret_val[i] == '[' and (ret_val[i] == ret_val[i-1]):
+            #print(ret_val[i] + ' '+ str(i))
+            j = i + 1
+            if ret_val[j+1] == ']':
+                index = int(ret_val[j])
+            else:
+                index = int(ret_val[slice(j, j+2)])
+            string = "[["+str(index)+"]]"
+            #(property["name"], property["baseCost"], property["currentOwner"])
+            property = properties[index]
+            if property[0] == -1:
+                copy = copy.replace(string, "")
+            elif property[2] == -1:
+                copy = copy.replace(string, property[0])
+            else:
+                print(index)
+                copy = copy.replace(string, (str(property[0]+'\n'+property[1]+'\n'+property[2])))
+    
+    return copy
+"""   
 #Will return a String containing the html for a user profile under the input username (string)
 def servePublicUserProfileHTML(username):
     information = database.playerDetails(username)
@@ -63,3 +114,7 @@ def serveLeaderboardHTML():
 
     ret_val = ret_val + '</table>\n<br>\n<br>\n</div>\n</div>\n</div>\n</div>\n</div>\n<footer class="container-fluid text-center">\n<p>Developed by Julius Merlino, Cole Grabenstatter, Buu Lam, Ziqian Yang, Songzhu Li for the Final Project in CSE312 with Dr. Jesse Hartloff</p>\n</footer>\n</body>\n</html>'
     return ret_val 
+"""  
+if __name__ == "__main__":
+    obj = api.initBoard()
+    htmlcreator(computeBoard(obj))
