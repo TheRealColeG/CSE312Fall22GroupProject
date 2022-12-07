@@ -30,7 +30,7 @@ def purchase(lobby, username):
         if p["username"] == username:
             snatch = i
             break
-    player = players[i]
+    player = players[snatch]
 
     location = player["location"]
     property = board[location]
