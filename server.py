@@ -187,6 +187,8 @@ def echo(ws):
         else:
             if data_received.get('boardUpdateRequest'): # replace "BOARD UPDATED!" with the pre-rendered html file
                 data_to_send = {'messageType': 'boardUpdateRequest', 'board': "BOARD UPDATED!"}
+            elif data_received.get('messageType'):
+                data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
         # print(data_to_send)
         for user in database.active_users:
             try:
