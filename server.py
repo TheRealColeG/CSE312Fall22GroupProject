@@ -188,7 +188,7 @@ def echo(ws):
                 except:
                     print("already deleted")
             # data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
-            data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
+            data_to_send = {'messageType': 'connections', 'user_count': len(database.list_of_players)}
             if len(database.active_users) <= 0:
                 break
         else:
@@ -198,7 +198,6 @@ def echo(ws):
                 data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
             elif data_received.get('messageType'):
                 data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
-        print("current_players:", len(database.active_users))
         for user in database.active_users:
             try:
                 database.active_users[user].send(json.dumps(data_to_send))
