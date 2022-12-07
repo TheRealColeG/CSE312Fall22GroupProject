@@ -225,8 +225,7 @@ def echo(ws):
                     if status[0] == turn:
                         print()
                     else:
-                        # current_player = 
-
+                        next_player = jack.pullUsernameFromTurn(1)
                         print()
                     new_board = templator.printer(1)
                     data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
