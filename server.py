@@ -78,11 +78,14 @@ def lookup():
         #Pull the cookie
         authCookie = str(escape(request.cookies.get('auth')))
         #Auth the cookie and gain the username
+        print("The cookie: "+str(authCookie), flush=True)
         username = database.authAuthCookie(str(authCookie))
+        print("the username: "+str(username), flush=True)
         if username != False:
             html = templator.servePrivateUserProfileHTML(username)
             return html
         else:
+            print("I'm blue!", flush=True)
             return redirect('/login', 301)
 
 # can also do this using .post() and .get()
@@ -141,16 +144,21 @@ def pullLeaderboard():
 #For use in starting games
 @app.route('/gameplay/<lobby>', methods=['GET'])
 def move(lobby):
-    print("This ran!!!", flush=True)
-    #authenticate token here:
+
+    authCookie = str(escape(request.cookies.get('auth')))
+    username = database.authAuthCookie(authCookie)
+    if username == False:
+        print("Fraud detected.", flush=True)
+        return redirect('/login', 301)
     try:
         lobby = int(lobby)
+        html = templator.printer(lobby)
+
+    # ??? add socket to something?
+        return render_template("leaderboardTEMPLATE.html")
     except:
         print("Fraud detected.", flush=True)
         return redirect('/404', 301)
-
-    # ??? add socket to something?
-    return render_template("leaderboardTEMPLATE.html")
 
 @app.route('/functions.js')
 def send_report():
@@ -161,8 +169,14 @@ def send_error():
     return render_template("404-bitchery.html")
 
 @app.route("/gameplayTEMPLATE", methods=["GET"])
+<<<<<<< Updated upstream
 def open_game():
     return render_template("gameplayTEMPLATE.html")
+=======
+def check_connection():
+    jack.startGame(1, ["Julius", "Buu", "Anton", "Cole"])
+    return json.loads(templator.printer(1))
+>>>>>>> Stashed changes
 
 @app.route("/waitingRoom", methods=["GET"])
 def check_connection():

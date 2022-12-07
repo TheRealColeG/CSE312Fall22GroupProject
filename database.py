@@ -382,7 +382,12 @@ def pullWinsLeaderboard():
         #If that profile's win count is already in the ranking
         if profile["wins"] in list(ranking.keys()):
             #Append the index of the profile to the list of profiles that have the (key) win count
-            ranking[profile["wins"]] = ranking[profile["wins"]].append(i)
+            li = ranking[profile["wins"]]
+            res = []
+            for entry in li:
+                res.append(entry)
+            res.append(i)
+            ranking[profile["wins"]] = res
         #If we are ranking the first profile with that win count (win count is unique so far)
         else:
             #Initialize the list to be solely that index
@@ -421,7 +426,12 @@ def pullBalLeaderboard():
         #If that profile's balance is already in the ranking
         if profile["monies"] in list(ranking.keys()):
             #Append the index of the profile to the list of profiles that have the (key) balance
-            ranking[profile["monies"]] = ranking[profile["monies"]].append(i)
+            li = ranking[profile["monies"]]
+            res = []
+            for entry in li:
+                res.append(entry)
+            res.append(i)
+            ranking[profile["monies"]] = res
         #If we are ranking the first profile with that balance (the balance is unique so far)
         else:
             #Initialize the list to be solely that index
