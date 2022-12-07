@@ -18,10 +18,59 @@ def authTurn(lobby, orientation):
         return True
     return False
 
+def purchase(lobby, username):
+    game = database.pullGame(lobby)
+    board = game["board"]
+    if game == 0:
+        raise Exception("no game available in purchase([...])")
+    snatch = None
+    players = game["players"]
+    for i in range(len(players)):
+        p = players[i]
+        if p["username"] == username:
+            snatch = i
+            break
+    player = players[snatch]
+
+    location = player["location"]
+    property = board[location]
+    property = api.buyProperty(property, player)
+
+    player = api.transferOwnership(property, player)
+
+    playerList = []
+    for i in range(len(players)):
+        if i != snatch:
+            playerList.append(players[i])
+        else:
+            playerList.append(player)
+    
+    game["players"] = playerList
+
+    gameBoard = []
+    for i in range(len(board)):
+        if board[i]["name"] != property["name"]:
+            gameBoard.append(board[i])
+        else:
+            gameBoard.append(property)
+    game["board"] = gameBoard
+
+    database.setGame(lobby, game)
+    return game["status"]
+#
 def sendMove(lobby, player, roll):
     game = database.pullGame(lobby)
     if game == 0:
-        raise Exception("No game available.")
+        raise Exception("No game available in sendMove([...]).")
+    #
+    snatch = None
+    players = game["players"]
+    for p in players:
+        if p["username"] == player:
+            snatch = p
+            break
+    player = snatch
+    #
     game = api.move(game, player, roll)
     database.setGame(lobby, game)
     return game["status"]
