@@ -171,7 +171,7 @@ def check_connection():
 @sock.route('/websocket') # can be dynamically changed
 def echo(ws): 
     random_username = "User" + str(random.randint(0, 1000))
-    while ws and ws.connected: 
+    while ws.connected: 
         data = ws.receive(timeout=0)
         if not data:
             continue
@@ -182,6 +182,7 @@ def echo(ws):
                 database.active_users[random_username] = ws
                 database.list_of_players.append(random_username)
             elif (data_received['socketMessage'] == 'close'):
+                print("a socket closed")
                 del database.active_users[random_username]
                 try:
                     database.list_of_players.remove(random_username)
@@ -189,8 +190,8 @@ def echo(ws):
                     print("already deleted")
             # data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
             data_to_send = {'messageType': 'connections', 'user_count': len(database.list_of_players)}
-            if len(database.active_users) <= 0:
-                break
+            # if len(database.active_users) <= 0:
+            #     break
         else:
             if data_received.get('DisplayBoard'): # replace "BOARD UPDATED!" with the pre-rendered html file
                 jack.startGame(1, database.list_of_players)

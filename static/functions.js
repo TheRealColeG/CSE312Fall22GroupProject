@@ -75,6 +75,11 @@ socket.onopen = function(event) {
     socket.send(JSON.stringify({'socketMessage': "connected"}));
 }
 
+socket.onclose = function(event) {
+    console.log("Client connected!");
+    socket.send(JSON.stringify({'socketMessage': "close"}));
+}
+
 window.addEventListener("beforeunload", function(event) {
     socket.send(JSON.stringify({'socketMessage': "close"}));
   });
