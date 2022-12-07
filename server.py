@@ -169,14 +169,14 @@ def send_error():
     return render_template("404-bitchery.html")
 
 @app.route("/gameplayTEMPLATE", methods=["GET"])
-<<<<<<< Updated upstream
 def open_game():
+    #jack.startGame(1, ["Julius", "Buu", "Anton", "Cole"])
+    #return json.loads(templator.printer(1))
+#
     return render_template("gameplayTEMPLATE.html")
-=======
-def check_connection():
-    jack.startGame(1, ["Julius", "Buu", "Anton", "Cole"])
-    return json.loads(templator.printer(1))
->>>>>>> Stashed changes
+
+
+
 
 @app.route("/waitingRoom", methods=["GET"])
 def check_connection():
@@ -193,15 +193,15 @@ def echo(ws):
         data_to_send = {}
         if data_received.get('socketMessage'):
             if (data_received['socketMessage'] == "connected"):
-            database.active_users[random_username] = ws
+                database.active_users[random_username] = ws
                 database.list_of_players.append(random_username)
             elif (data_received['socketMessage'] == 'close'):
                 print("a socket closed")
             del database.active_users[random_username]
-                try:
-                    database.list_of_players.remove(random_username)
-                except:
-                    print("already deleted")
+            try:
+                database.list_of_players.remove(random_username)
+            except:
+                print("already deleted")
             # data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
             data_to_send = {'messageType': 'connections', 'user_count': len(database.list_of_players)}
             # if len(database.active_users) <= 0:
