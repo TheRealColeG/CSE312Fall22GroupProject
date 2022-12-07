@@ -171,7 +171,7 @@ def check_connection():
 @sock.route('/websocket') # can be dynamically changed
 def echo(ws): 
     random_username = "User" + str(random.randint(0, 1000))
-    while ws.connected: 
+    while ws and ws.connected: 
         data = ws.receive(timeout=0)
         if not data:
             continue
@@ -204,8 +204,8 @@ def echo(ws):
             except:
                 try:
                     database.list_of_players.remove(random_username)
-                except ValueError:
-                    continue
+                except:
+                    print("can't delete in loop")
                 continue
 
 # DON'T CHANGE THIS! #
