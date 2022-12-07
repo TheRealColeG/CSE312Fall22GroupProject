@@ -28,7 +28,8 @@ if "status" not in db.list_collection_names():
     status.insert_one({"status" : False})
 
 # Testing 
-active_users = {} 
+active_users = {}
+list_of_players = [] 
 
 #If there are no accounts created
 if "names" not in db.list_collection_names():

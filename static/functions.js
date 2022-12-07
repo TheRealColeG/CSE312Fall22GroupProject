@@ -34,8 +34,8 @@ socket.onmessage = function(ws_message) {
         case 'connections':
             reflectConnections(message);
             break;
-        case 'boardUpdateRequest':
-            updateBoard(message);
+        case 'DisplayBoard':
+            DisplayBoard(message);
             break;
     }
 }
@@ -50,10 +50,13 @@ function addMessage(chatMessage) {
 function reflectConnections(users) { // user is a javascript map/dictionary
     let connection_count = document.getElementById('reflectConnections');
     connection_count.innerHTML = "<b>" + "Users connected" + "</b>: " + users.user_count + "<br/>";
+    if (users.user_count == 4) {
+        socket.send(JSON.stringify({'DisplayBoard': 'OpenGame'}))
+    }
 }
 
 // Renders a new board
-function updateBoard(new_board) {
+function DisplayBoard(new_board) {
     let game_board = document.getElementById('game-board');
     game_board.innerHTML = "<b>" + new_board.board + "</b>"
 }

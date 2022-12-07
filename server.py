@@ -179,14 +179,18 @@ def echo(ws):
         if data_received.get('socketMessage'):
             if (data_received['socketMessage'] == "connected"):
                 database.active_users[random_username] = ws
+                database.list_of_players.append(random_username)
             elif (data_received['socketMessage'] == 'close'):
                 del database.active_users[random_username]
+                database.list_of_players.remove(random_username)
             data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
             if len(database.active_users) <= 0:
                 break
         else:
-            if data_received.get('boardUpdateRequest'): # replace "BOARD UPDATED!" with the pre-rendered html file
-                data_to_send = {'messageType': 'boardUpdateRequest', 'board': "BOARD UPDATED!"}
+            if data_received.get('DisplayBoard'): # replace "BOARD UPDATED!" with the pre-rendered html file
+                jack.startGame(1, database.list_of_players)
+                new_board = templator.printer(1)
+                data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
             elif data_received.get('messageType'):
                 data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
         # print(data_to_send)
