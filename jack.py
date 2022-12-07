@@ -18,6 +18,16 @@ def authTurn(lobby, orientation):
         return True
     return False
 
+def pullUsernameFromTurn(lobby):
+    turn = pullTurn(lobby)
+    game = database.pullGame(lobby)
+    players = game["players"]
+    for player in players:
+        if player["order"] == turn:
+            return player["username"]
+    raise Exception("It is no one's turn!!!")
+
+
 def pullTurn(lobby):
     game = database.pullGame(lobby)
     if game == 0:
