@@ -18,6 +18,12 @@ def authTurn(lobby, orientation):
         return True
     return False
 
+def pullTurn(lobby):
+    game = database.pullGame(lobby)
+    if game == 0:
+        raise Exception("bad game in pullTurn([...])")
+    return game["status"][0]
+
 def purchase(lobby, username):
     game = database.pullGame(lobby)
     board = game["board"]
