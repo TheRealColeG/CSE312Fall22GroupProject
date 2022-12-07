@@ -141,6 +141,7 @@ def pullLeaderboard():
     else:
         return template
 
+"""
 #For use in starting games
 @app.route('/gameplay/<lobby>', methods=['GET'])
 def move(lobby):
@@ -159,7 +160,7 @@ def move(lobby):
     except:
         print("Fraud detected.", flush=True)
         return redirect('/404', 301)
-
+"""
 @app.route('/functions.js')
 def send_report():
     return send_from_directory('static', 'functions.js')
@@ -185,7 +186,9 @@ def check_connection():
 
 @sock.route('/websocket') # can be dynamically changed
 def echo(ws): 
-    random_username = "User" + str(random.randint(0, 1000))
+    #random_username = "User" + str(random.randint(0, 1000))
+    username = database.authAuthCookie(str(escape(request.cookies.get('auth'))))
+    random_username = username
     while ws.connected: 
         data = ws.receive(timeout=0)
         if not data:
