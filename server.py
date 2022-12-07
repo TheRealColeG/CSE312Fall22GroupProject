@@ -170,6 +170,9 @@ def send_error():
 
 @app.route("/gameplayTEMPLATE", methods=["GET"])
 def open_game():
+    #jack.startGame(1, ["Julius", "Buu", "Anton", "Cole"])
+    #return json.loads(templator.printer(1))
+#
     return render_template("gameplayTEMPLATE.html")
 
 # def check_connection():
