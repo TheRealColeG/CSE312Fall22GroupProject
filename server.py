@@ -169,14 +169,12 @@ def send_error():
     return render_template("404-bitchery.html")
 
 @app.route("/gameplayTEMPLATE", methods=["GET"])
-<<<<<<< Updated upstream
 def open_game():
     return render_template("gameplayTEMPLATE.html")
-=======
-def check_connection():
-    jack.startGame(1, ["Julius", "Buu", "Anton", "Cole"])
-    return json.loads(templator.printer(1))
->>>>>>> Stashed changes
+
+# def check_connection():
+#     jack.startGame(1, ["Julius", "Buu", "Anton", "Cole"])
+#     return json.loads(templator.printer(1))
 
 @app.route("/waitingRoom", methods=["GET"])
 def check_connection():
