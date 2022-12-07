@@ -186,7 +186,6 @@ def check_connection():
 
 @sock.route('/websocket') # can be dynamically changed
 def echo(ws): 
-    #random_username = "User" + str(random.randint(0, 1000))
     username = database.authAuthCookie(str(escape(request.cookies.get('auth'))))
     random_username = username
     while ws.connected: 
