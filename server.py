@@ -218,17 +218,21 @@ def echo(ws):
                 data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
             elif data_received.get('button_type'):
                 if data_received['button_type'] == 'roll':
-                    turn = jack.pullTurn(1)
-                    roll = getRoll()
-                    roll = roll[0] + roll[1]        
-                    status = jack.sendMove(1, random_username, roll)
-                    if status[0] == turn:
-                        print()
+                    p = jack.pullUsernameFromTurn(1)
+                    if p == random_username:
+                        turn = jack.pullTurn(1)
+                        roll = getRoll()
+                        roll = roll[0] + roll[1]        
+                        status = jack.sendMove(1, random_username, roll)
+                        if status[0] == turn:
+                            print()
+                        else:
+                            next_player = jack.pullUsernameFromTurn(1)
+                            print()
+                        new_board = templator.printer(1)
+                        data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
                     else:
-                        next_player = jack.pullUsernameFromTurn(1)
-                        print()
-                    new_board = templator.printer(1)
-                    data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
+                        print("Someone pushed a button and it wasn't their turn!!! Naughty.", flush=True)
                 elif data_received['button_type'] == 'buy':
                     print()
                 elif data_received['button_type'] == 'pass':
