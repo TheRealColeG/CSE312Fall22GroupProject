@@ -51,7 +51,7 @@ def initProperty(title, cost, mortgage, house, rents, owner, houses, occupied, m
 	#ret_val[i] = initProperty("FREE PARKING", None, None, None, 0, 0, None, 0, None)
 	return property
 
-#Changes the ownership of the property when it is bought
+#Changes the ownership of the property when it is bought. Returns a property.
 def buyProperty(property, player):
 	#Changes the current owner to the player who was passed
 	property["currentOwner"] = player["username"]
@@ -59,6 +59,21 @@ def buyProperty(property, player):
 	property["mortgageStatus"] = False
 	property["houseCount"] = 0
 	return property
+
+#Changes the player's property list. Returns a player.
+def transferOwnership(property, player):
+	if player["username"] != property["currentOwner"]:
+		raise Exception("transferOwnership([...]) fucked up!!")
+	cur = player["properties"]
+	if cur == []:
+		player["properties"] = [property]
+	else:
+		res = []
+		for entry in cur:
+			res.append(entry)
+		res.append(property)
+		player["properties"] = res
+	return player
 
 #Reverses the mortgage status of a property when called
 def mortgageProperty(property):
