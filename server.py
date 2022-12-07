@@ -218,10 +218,17 @@ def echo(ws):
                 data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
             elif data_received.get('button_type'):
                 if data_received['button_type'] == 'roll':
+                    turn = jack.pullTurn(1)
                     roll = getRoll()
                     roll = roll[0] + roll[1]        
                     status = jack.sendMove(1, random_username, roll)
-                    # new_board = templator.printer(1)
+                    if status[0] == turn:
+                        print()
+                    else:
+                        # current_player = 
+
+                        print()
+                    new_board = templator.printer(1)
                     data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
                 elif data_received['button_type'] == 'buy':
                     print()
