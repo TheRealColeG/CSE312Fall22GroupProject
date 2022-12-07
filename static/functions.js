@@ -1,5 +1,4 @@
 "use strict";
-
 const socket = new WebSocket('ws://' + window.location.host + '/websocket');
 // const socket = new WebSocket(wsProtocol + "://" + location.host + "/websocket/{{ username }}");
 
@@ -88,3 +87,23 @@ window.addEventListener("beforeunload", function(event) {
 socket.onerror = function(error) {
     console.log('WebSocket Error: ' + error);
 };
+
+//User pressed roll
+function roll() {
+    socket.send((JSON.stringify({'button_type': 'roll'})));
+}
+
+//User wants to buy current property
+function buy() {
+    socket.send((JSON.stringify({'button_type': 'buy'})));
+}
+
+//User does NOT want to buy current property
+function pass() {
+    socket.send((JSON.stringify({'button_type': 'pass'})));
+}
+
+//User wants to leave game (i.e. remove their websocket connection quietly)
+function leave() {
+    socket.close()
+}

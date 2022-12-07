@@ -18,7 +18,6 @@ def authTurn(lobby, orientation):
         return True
     return False
 
-#
 def sendMove(lobby, player, roll):
     game = database.pullGame(lobby)
     if game == 0:

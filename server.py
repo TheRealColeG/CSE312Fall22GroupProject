@@ -216,6 +216,16 @@ def echo(ws):
                 data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
             elif data_received.get('messageType'):
                 data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
+            elif data_received.get('button_type'):
+                if data_received['button_type'] == 'roll':
+                    # roll = getRoll()
+                    # jack.sendMove(1, random_username, roll)
+                    # new_board = templator.printer(1)
+                    data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
+                elif data_received['button_type'] == 'buy':
+                    print()
+                elif data_received['button_type'] == 'pass':
+                    print()
         for user in database.active_users:
             try:
                 database.active_users[user].send(json.dumps(data_to_send))
