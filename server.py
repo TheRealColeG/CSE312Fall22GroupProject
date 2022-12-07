@@ -193,11 +193,11 @@ def echo(ws):
         data_to_send = {}
         if data_received.get('socketMessage'):
             if (data_received['socketMessage'] == "connected"):
-                database.active_users[random_username] = ws
+            database.active_users[random_username] = ws
                 database.list_of_players.append(random_username)
             elif (data_received['socketMessage'] == 'close'):
                 print("a socket closed")
-                del database.active_users[random_username]
+            del database.active_users[random_username]
                 try:
                     database.list_of_players.remove(random_username)
                 except:
