@@ -11,6 +11,7 @@ import jack
 import time
 import json
 import random
+import html
 
 app = Flask(__name__, static_folder="./static/functions.js")
 sock = Sock(app)
@@ -182,7 +183,11 @@ def echo(ws):
                 database.list_of_players.append(random_username)
             elif (data_received['socketMessage'] == 'close'):
                 del database.active_users[random_username]
-                database.list_of_players.remove(random_username)
+                try:
+                    database.list_of_players.remove(random_username)
+                except:
+                    print("already deleted")
+            # data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
             data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
             if len(database.active_users) <= 0:
                 break
@@ -193,12 +198,16 @@ def echo(ws):
                 data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
             elif data_received.get('messageType'):
                 data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
-        # print(data_to_send)
+        print("current_players:", len(database.active_users))
         for user in database.active_users:
             try:
                 database.active_users[user].send(json.dumps(data_to_send))
             except:
-                break
+                try:
+                    database.list_of_players.remove(random_username)
+                except ValueError:
+                    continue
+                continue
 
 # DON'T CHANGE THIS! #
 if __name__ == "__main__":
