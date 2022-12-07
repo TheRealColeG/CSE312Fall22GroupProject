@@ -178,8 +178,6 @@ def echo(ws):
             elif (data_received['socketMessage'] == 'close'):
                 del database.active_users[random_username]
             data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
-            if (len(database.active_users) <= 0):
-                break
         else:
             if data_received.get('boardUpdateRequest'): # replace "BOARD UPDATED!" with the pre-rendered html file
                 data_to_send = {'messageType': 'boardUpdateRequest', 'board': "BOARD UPDATED!"}
