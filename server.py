@@ -160,8 +160,12 @@ def send_error():
     return render_template("404-bitchery.html")
 
 @app.route("/gameplayTEMPLATE", methods=["GET"])
-def check_connection():
+def open_game():
     return render_template("gameplayTEMPLATE.html")
+
+@app.route("/waitingRoom", methods=["GET"])
+def check_connection():
+    return render_template("waitingRoom.html")
 
 @sock.route('/websocket') # can be dynamically changed
 def echo(ws): 
@@ -178,6 +182,8 @@ def echo(ws):
             elif (data_received['socketMessage'] == 'close'):
                 del database.active_users[random_username]
             data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
+            if len(database.active_users) <= 0:
+                break
         else:
             if data_received.get('boardUpdateRequest'): # replace "BOARD UPDATED!" with the pre-rendered html file
                 data_to_send = {'messageType': 'boardUpdateRequest', 'board': "BOARD UPDATED!"}
