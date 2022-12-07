@@ -170,7 +170,7 @@ def check_connection():
 @sock.route('/websocket') # can be dynamically changed
 def echo(ws): 
     random_username = "User" + str(random.randint(0, 1000))
-    while ws.connected: 
+    while ws and ws.connected: 
         data = ws.receive(timeout=0)
         if not data:
             continue
@@ -193,7 +193,7 @@ def echo(ws):
                 data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
             elif data_received.get('messageType'):
                 data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
-        # print(data_to_send)
+        print(data_received)
         for user in database.active_users:
             try:
                 database.active_users[user].send(json.dumps(data_to_send))
