@@ -47,14 +47,15 @@ function addMessage(chatMessage) {
 
 // Renders when a new user connect to the page
 function reflectConnections(users) { // user is a javascript map/dictionary
+    let count = 4
     let connection_count = document.getElementById('reflectConnections');
-    let user_acc = users.user_count % 3 == 0 ? users.user_count % 3 + 3 : users.user_count % 3;
+    let user_acc = users.user_count % count == 0 ? users.user_count % count + count : users.user_count % count;
     connection_count.innerHTML = "<b>" + "Users connected" + "</b>: " + user_acc + "<br/>";
     let game_board = document.getElementById('game-board');
-    if (users.user_count % 3 == 0) {
+    if (users.user_count % count == 0) {
         socket.send(JSON.stringify({'DisplayBoard': 'OpenGame'}));
     }
-    else if (users.user_count <= 3) {
+    else if (users.user_count <= count) {
         game_board.innerHTML = "<b>" + "Waiting for enough players..." + "</b>"
     }
 }

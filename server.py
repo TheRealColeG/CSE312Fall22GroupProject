@@ -57,6 +57,7 @@ def change_password():
 def get_leaderboard():
     html = templator.serveLeaderboardHTML()
     return html
+    #return render_template('404-bitchery.html')
 
 @app.route('/users', methods=['GET', 'POST'])
 def lookup():
@@ -169,6 +170,16 @@ def send_report():
 def send_error():
     return render_template("404-bitchery.html")
 
+@app.route('/test')
+def tester():
+    jack.startGame(3, ["Julius", "Jack", "Susan", "Philip"])
+    doc = ""
+    with open('templates/tester.html', 'r') as file:
+        doc = file.read()
+    doc = doc.replace("@@@", templator.printer(3))
+    return doc
+
+
 @app.route("/gameplayTEMPLATE", methods=["GET"])
 def open_game():
     #jack.startGame(1, ["Julius", "Buu", "Anton", "Cole"])
@@ -187,7 +198,6 @@ def check_connection():
 @sock.route('/websocket') # can be dynamically changed
 def echo(ws): 
     username = database.authAuthCookie(str(escape(request.cookies.get('auth'))))
-    random_username = username 
     while ws.connected: 
         data = ws.receive(timeout=0)
         if not data:
@@ -196,13 +206,13 @@ def echo(ws):
         data_to_send = {}
         if data_received.get('socketMessage'):
             if (data_received['socketMessage'] == "connected"):
-                database.active_users[random_username] = ws
-                database.list_of_players.append(random_username)
+                database.active_users[username] = ws
+                database.list_of_players.append(username)
             elif (data_received['socketMessage'] == 'close'):
                 print("a socket closed")
-                del database.active_users[random_username]
+                del database.active_users[username]
                 try:
-                    database.list_of_players.remove(random_username)
+                    database.list_of_players.remove(username)
                 except:
                     print("already deleted")
             # data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
@@ -213,40 +223,54 @@ def echo(ws):
                 new_board = templator.printer(1)
                 data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
             elif data_received.get('messageType'):
-                data_to_send = {'messageType': 'chatMessage', 'username': random_username, 'message': data_received['comment']}
+                data_to_send = {'messageType': 'chatMessage', 'username': username, 'message': data_received['comment']}
             elif data_received.get('button_type'):
                 if data_received['button_type'] == 'roll':
+                    status = jack.pullStatus(1)
                     p = jack.pullUsernameFromTurn(1)
-                    if p == random_username:
-                        turn = jack.pullTurn(1)
+                    if p == username and status[1] == "Roll":
                         roll = getRoll()
                         roll = roll[0] + roll[1]        
-                        status = jack.sendMove(1, random_username, roll)
-                        if status[0] == turn:
-                            print()
-                        else:
-                            next_player = jack.pullUsernameFromTurn(1)
-                            print()
+                        jack.sendMove(1, username, roll)
+                        new_board = templator.printer(1)
+                        data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
+                    else:
+                        #print(username+" pushed the 'Roll' button and it wasn't their turn!")
+                        print("Someone pushed a button and it wasn't their turn!!! Naughty.", flush=True)
+                    if jack.checkEnd(1):
+                        ws.close()
+                elif data_received['button_type'] == 'buy':
+                    status = jack.pullStatus(1)
+                    p = jack.pullUsernameFromTurn(1)
+                    if p == username and status[1] == "Choice":
+                        jack.purchase(1, username)
                         new_board = templator.printer(1)
                         data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
                     else:
                         print("Someone pushed a button and it wasn't their turn!!! Naughty.", flush=True)
-                elif data_received['button_type'] == 'buy':
-                    print()
+                    if jack.checkEnd(1):
+                        ws.close()
                 elif data_received['button_type'] == 'pass':
-                    print()
-        # if jack.checkEnd(1):
-        #     ws.close()
+                    status = jack.pullStatus(1)
+                    p = jack.pullUsernameFromTurn(1)
+                    if p == username and status[1] == "Choice":
+                        jack.passTurn(1)
+                        new_board = templator.printer(1)
+                        data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
+                    else:
+                        print("Someone pushed a button and it wasn't their turn!!! Naughty.", flush=True)
+                    if jack.checkEnd(1):
+                        ws.close()
         for user in database.active_users:
             try:
                 database.active_users[user].send(json.dumps(data_to_send))
             except:
                 try:
-                    database.list_of_players.remove(random_username)
+                    database.list_of_players.remove(user)
                 except:
                     print("can't delete in loop")
                 continue
 
 # DON'T CHANGE THIS! #
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=8080, debug=True)

@@ -27,6 +27,11 @@ def pullUsernameFromTurn(lobby):
             return player["username"]
     raise Exception("It is no one's turn!!!")
 
+def pullStatus(lobby):
+    game = database.pullGame(lobby)
+    if game == 0:
+        raise Exception("no game available in pullStatus([...])")
+    return game["status"]
 
 def pullTurn(lobby):
     game = database.pullGame(lobby)
@@ -50,8 +55,8 @@ def purchase(lobby, username):
 
     location = player["location"]
     property = board[location]
-    property = api.buyProperty(property, player)
 
+    property = api.buyProperty(property, player)
     player = api.transferOwnership(property, player)
 
     playerList = []
@@ -60,7 +65,6 @@ def purchase(lobby, username):
             playerList.append(players[i])
         else:
             playerList.append(player)
-    
     game["players"] = playerList
 
     gameBoard = []
@@ -71,6 +75,15 @@ def purchase(lobby, username):
             gameBoard.append(property)
     game["board"] = gameBoard
 
+    game = api.changeTurn(game, game["status"][0], len(game["players"]))
+    game["status"] = (game["status"][0], "Roll")
+    database.setGame(lobby, game)
+    return game["status"]
+
+def passTurn(lobby):
+    game = database.pullGame(lobby)
+    game = api.changeTurn(game, game["status"][0], len(game["players"]))
+    game["status"] = (game["status"][0], "Roll")
     database.setGame(lobby, game)
     return game["status"]
 #
