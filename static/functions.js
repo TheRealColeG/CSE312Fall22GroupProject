@@ -48,13 +48,13 @@ function addMessage(chatMessage) {
 // Renders when a new user connect to the page
 function reflectConnections(users) { // user is a javascript map/dictionary
     let connection_count = document.getElementById('reflectConnections');
-    let user_acc = users.user_count % 4 == 0 ? users.user_count % 4 + 4 : users.user_count % 4;
+    let user_acc = users.user_count % 3 == 0 ? users.user_count % 3 + 3 : users.user_count % 3;
     connection_count.innerHTML = "<b>" + "Users connected" + "</b>: " + user_acc + "<br/>";
     let game_board = document.getElementById('game-board');
-    if (users.user_count % 4 == 0) {
+    if (users.user_count % 3 == 0) {
         socket.send(JSON.stringify({'DisplayBoard': 'OpenGame'}));
     }
-    else if (users.user_count <= 4) {
+    else if (users.user_count <= 3) {
         game_board.innerHTML = "<b>" + "Waiting for enough players..." + "</b>"
     }
 }
@@ -63,10 +63,6 @@ function reflectConnections(users) { // user is a javascript map/dictionary
 function DisplayBoard(new_board) {
     let game_board = document.getElementById('game-board');
     game_board.innerHTML = "<b>" + new_board.board + "</b>"
-}
-
-function updateBoardRequest() {
-    socket.send(JSON.stringify({'boardUpdateRequest': "game_board_update_request"}));
 }
 
 socket.onopen = function(event) {

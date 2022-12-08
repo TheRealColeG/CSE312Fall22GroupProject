@@ -187,7 +187,7 @@ def check_connection():
 @sock.route('/websocket') # can be dynamically changed
 def echo(ws): 
     username = database.authAuthCookie(str(escape(request.cookies.get('auth'))))
-    random_username = username
+    random_username = username 
     while ws.connected: 
         data = ws.receive(timeout=0)
         if not data:
@@ -207,8 +207,6 @@ def echo(ws):
                     print("already deleted")
             # data_to_send = {'messageType': 'connections', 'user_count': len(database.active_users)}
             data_to_send = {'messageType': 'connections', 'user_count': len(database.list_of_players)}
-            # if len(database.active_users) <= 0:
-            #     break
         else:
             if data_received.get('DisplayBoard'): # replace "BOARD UPDATED!" with the pre-rendered html file
                 jack.startGame(1, database.list_of_players)
@@ -237,8 +235,8 @@ def echo(ws):
                     print()
                 elif data_received['button_type'] == 'pass':
                     print()
-        if jack.checkEnd(1):
-            ws.close()
+        # if jack.checkEnd(1):
+        #     ws.close()
         for user in database.active_users:
             try:
                 database.active_users[user].send(json.dumps(data_to_send))
