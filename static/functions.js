@@ -3,7 +3,7 @@ let test = "wss";
 if (window.location.protocol === "http:") {
     test = "ws";
 }
-const socket = new WebSocket(test + "://" + window.location.host + '/websocket');
+const socket = new WebSocket(test + "://" + location.host + '/websocket');
 // const socket = new WebSocket(wsProtocol + "://" + location.host + "/websocket/{{ username }}");
 console.log(window.location.host)
 
