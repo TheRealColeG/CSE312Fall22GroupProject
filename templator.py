@@ -1,6 +1,6 @@
 import database
-from monopoly import api
-import json
+#from monopoly import api
+#import json
 
 def computeBoard(lobby):
     board = database.pullGame(lobby)["board"]
@@ -80,9 +80,18 @@ def printer(lobby):
                 for username in locations[index]:
                     replacement = str(replacement+username+"\n")
                 copy = copy.replace(str(string), replacement)
-    
-    return copy#json.dumps(copy)
 
+    players = game["players"]
+    for i in range(len(players)):
+        nameKey = "+"+"+"+str(i+1)+"+"+"+"
+        balKey = "="+"="+str(i+1)+"="+"="
+        player = players[i]
+        copy = copy.replace(nameKey, str(player["username"]))
+        copy = copy.replace(balKey, "$"+str(player["money"]))
+    
+    return copy
+
+    #json.dumps(copy)
     # Julius' code, main branch has the below uncomment
     # ret_val = ""
     # file = open("templates/gameplayTEMPLATE.html", 'r')

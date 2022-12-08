@@ -169,6 +169,16 @@ def send_report():
 def send_error():
     return render_template("404-bitchery.html")
 
+@app.route('/test')
+def tester():
+    jack.startGame(3, ["Julius", "Jack", "Susan", "Philip"])
+    doc = ""
+    with open('templates/tester.html', 'r') as file:
+        doc = file.read()
+    doc = doc.replace("@@@", templator.printer(3))
+    return doc
+
+
 @app.route("/gameplayTEMPLATE", methods=["GET"])
 def open_game():
     #jack.startGame(1, ["Julius", "Buu", "Anton", "Cole"])
@@ -226,6 +236,7 @@ def echo(ws):
                         new_board = templator.printer(1)
                         data_to_send = {'messageType': 'DisplayBoard', 'board': new_board}
                     else:
+                        #print(username+" pushed the 'Roll' button and it wasn't their turn!")
                         print("Someone pushed a button and it wasn't their turn!!! Naughty.", flush=True)
                     if jack.checkEnd(1):
                         ws.close()
