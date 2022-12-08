@@ -45,19 +45,10 @@ def change_password():
     else:
         return redirect('/404', 301)
 
-#@app.route('/user/<username>')
-#def show_user_profile(username):
-    # show the user profile for that user
-#   username = escape(username)
-#   return render_template_string(templator.servePublicUserProfileHTML(username))
-
-# Using GET and POST requests for same page
-
 @app.route('/leaderboard', methods=['GET'])
 def get_leaderboard():
     html = templator.serveLeaderboardHTML()
     return html
-    #return render_template('404-bitchery.html')
 
 @app.route('/users', methods=['GET', 'POST'])
 def lookup():
@@ -79,7 +70,6 @@ def lookup():
         #Pull the cookie
         authCookie = str(escape(request.cookies.get('auth')))
         #Auth the cookie and gain the username
-        print("The cookie: "+str(authCookie), flush=True)
         username = database.authAuthCookie(str(authCookie))
         print("the username: "+str(username), flush=True)
         if username != False:
@@ -182,14 +172,12 @@ def tester():
 
 @app.route("/gameplayTEMPLATE", methods=["GET"])
 def open_game():
-    #jack.startGame(1, ["Julius", "Buu", "Anton", "Cole"])
-    #return json.loads(templator.printer(1))
-#
-    return render_template("gameplayTEMPLATE.html")
+    username = database.authAuthCookie(str(escape(request.cookies.get('auth'))))
+    if username != False:
+        return render_template("gameplayTEMPLATE.html")
+    else:
+        return redirect('/login', 301)
 
-# def check_connection():
-#     jack.startGame(1, ["Julius", "Buu", "Anton", "Cole"])
-#     return json.loads(templator.printer(1))
 
 @app.route("/waitingRoom", methods=["GET"])
 def check_connection():
