@@ -274,4 +274,4 @@ def echo(ws):
 
 # DON'T CHANGE THIS! #
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="159.89.90.80", port=8080)
