@@ -55,9 +55,9 @@ def change_password():
 
 @app.route('/leaderboard', methods=['GET'])
 def get_leaderboard():
-    #html = templator.serveLeaderboardHTML()
-    #return html
-    return render_template('404-bitchery.html')
+    html = templator.serveLeaderboardHTML()
+    return html
+    #return render_template('404-bitchery.html')
 
 @app.route('/users', methods=['GET', 'POST'])
 def lookup():
