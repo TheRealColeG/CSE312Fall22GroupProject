@@ -256,7 +256,7 @@ def echo(ws):
                 database.active_users[user].send(json.dumps(data_to_send))
             except:
                 try:
-                    database.list_of_players.remove(username)
+                    database.list_of_players.remove(user)
                 except:
                     print("can't delete in loop")
                 continue
