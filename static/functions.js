@@ -1,5 +1,9 @@
 "use strict";
-const socket = new WebSocket('ws://' + window.location.host + '/websocket');
+let test = "wss";
+if (window.location.protocol === "http:") {
+    test = "ws";
+}
+const socket = new WebSocket(test + "://" + window.location.host + '/websocket');
 // const socket = new WebSocket(wsProtocol + "://" + location.host + "/websocket/{{ username }}");
 console.log(window.location.host)
 
