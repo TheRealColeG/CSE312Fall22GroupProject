@@ -1,6 +1,6 @@
 Domain name of website:
 
-https://thewily5.me
+https://thewily5.me or https://www.thewily5.me
 
 The directory of files: 
 
