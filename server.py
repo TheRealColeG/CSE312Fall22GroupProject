@@ -195,7 +195,7 @@ def check_connection():
 @sock.route('/websocket') # can be dynamically changed
 def echo(ws): 
     username = database.authAuthCookie(str(escape(request.cookies.get('auth'))))
-    while ws.connected: 
+    while True: 
         data = ws.receive(timeout=0)
         if not data:
             continue
@@ -270,4 +270,4 @@ def echo(ws):
 
 # DON'T CHANGE THIS! #
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=True, ssl_context=("nowww_fullchain.pem","nowww_privkey.pem"))
+    app.run(host="0.0.0.0", port=8080, debug=True, ssl_context=("fullchain.pem","privkey.pem"))
