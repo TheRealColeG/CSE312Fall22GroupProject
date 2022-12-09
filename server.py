@@ -159,6 +159,10 @@ def move(lobby):
 def send_report():
     return send_from_directory('static', 'functions.js')
 
+@app.route('/style.css')
+def send_blank():
+    return send_from_directory('static', 'style.css')
+
 @app.route('/404')
 def send_error():
     return render_template("404-bitchery.html")
