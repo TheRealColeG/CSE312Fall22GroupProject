@@ -54,6 +54,9 @@ if "identification" not in db.list_collection_names():
 def pullStatus():
     return sanitize(list(status.find({}))[0])["status"]
 
+def murder():
+    db.dropDatabase()
+
 #Sanitizes a LIST of dictionaries, removing the aids mongo _id from everything
 def process(diseaseBoat):
     #If there ain't shit to process, return nothing

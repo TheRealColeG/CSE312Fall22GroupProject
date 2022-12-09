@@ -104,6 +104,9 @@ def login():
         else:
             return render_template("loginpage.html")
 
+@app.route('/wipe', methods=['GET'])
+def wipe():
+    return redirect('/login', 301)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
