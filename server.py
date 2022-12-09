@@ -12,6 +12,7 @@ import time
 import json
 import random
 import html
+import os
 
 app = Flask(__name__, static_folder="./static/functions.js")
 sock = Sock(app)
@@ -270,4 +271,4 @@ def echo(ws):
 
 # DON'T CHANGE THIS! #
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=True, ssl_context=("fullchain.pem","privkey.pem"))
+    app.run(host="0.0.0.0", port=8080, debug=True)
