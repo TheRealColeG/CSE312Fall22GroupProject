@@ -173,13 +173,13 @@ def tester():
     return doc
 
 
-@app.route("/gameplayTEMPLATE", methods=["GET"])
+@app.route("/gameplay", methods=["GET"])
 def open_game():
     #username = database.authAuthCookie(str(escape(request.cookies.get('auth'))))
     #print("The cookie is: "+str(request.cookies.get('auth')), flush=True)
     #print("The username is: "+str(username), flush=True)
     #if username != False:
-    return render_template("gameplayTEMPLATE.html")
+    return render_template("gameplay.html")
     #else:
         #return redirect('/login', 301)
 
