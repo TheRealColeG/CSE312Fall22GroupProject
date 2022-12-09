@@ -1,3 +1,7 @@
+Domain name of website:
+
+https://thewily5.me
+
 The directory of files: 
 
 api.py is the actual API behind the monopoly. It contains and reads hard coded monopoly rules such as the default board, prices and initializations of dictionary objects reflecting details of a game and respectively modifies game dictionaries.
