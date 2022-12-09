@@ -25,6 +25,6 @@ ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait
 RUN chmod +x /wait
 
 # command for running the application in container
-#CMD /wait && python3 -u server.py
-CMD [/wait && python3 -u server.py, gunicorn -b :5000 --workers 4 --threads 100 module:app]
+CMD /wait && python3 -u server.py
+#CMD [/wait && python3 -u server.py, gunicorn -b :5000 --workers 4 --threads 100 module:app]
 
