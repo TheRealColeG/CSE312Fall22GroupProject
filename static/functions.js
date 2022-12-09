@@ -1,5 +1,5 @@
 "use strict";
-let test = "wss";
+let test = "ws";
 if (window.location.protocol === "http:") {
     test = "ws";
     console.log(window.location.protocol)
