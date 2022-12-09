@@ -2,10 +2,13 @@
 let test = "wss";
 if (window.location.protocol === "http:") {
     test = "ws";
+    console.log(window.location.protocol)
 }
 const socket = new WebSocket(test + "://" + location.host + '/websocket');
 // const socket = new WebSocket(wsProtocol + "://" + location.host + "/websocket/{{ username }}");
-console.log(window.location.host)
+console.log("HOST:" + window.location.host)
+console.log("WINDOW: " + test + "://" + window.location.host + '/websocket')
+console.log("NOT WINDOW: " + test + "://" + location.host + '/websocket')
 
 // Allow users to send messages by pressing enter instead of clicking the Send button
 document.addEventListener("keypress", function (event) {
