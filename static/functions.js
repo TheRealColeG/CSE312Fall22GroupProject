@@ -4,6 +4,7 @@ if (window.location.protocol === "http:") {
     test = "ws";
     console.log(window.location.protocol)
 }
+
 const socket = new WebSocket(test + "://" + location.host + '/websocket');
 // const socket = new WebSocket(wsProtocol + "://" + location.host + "/websocket/{{ username }}");
 console.log("HOST:" + window.location.host)

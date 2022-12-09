@@ -13,7 +13,7 @@ COPY . .
 RUN pip3 install -r requirements.txt
 
 #default port 
-#EXPOSE 8080
+EXPOSE 8080
 
 # The docker-compose-wait tool is a small command line utility to wait 
 # for other docker images to be started while using docker-compose. 
