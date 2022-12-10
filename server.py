@@ -134,26 +134,7 @@ def pullLeaderboard():
     else:
         return template
 
-"""
-#For use in starting games
-@app.route('/gameplay/<lobby>', methods=['GET'])
-def move(lobby):
 
-    authCookie = str(escape(request.cookies.get('auth')))
-    username = database.authAuthCookie(authCookie)
-    if username == False:
-        print("Fraud detected.", flush=True)
-        return redirect('/login', 301)
-    try:
-        lobby = int(lobby)
-        html = templator.printer(lobby)
-
-    # ??? add socket to something?
-        return render_template("leaderboardTEMPLATE.html")
-    except:
-        print("Fraud detected.", flush=True)
-        return redirect('/404', 301)
-"""
 @app.route('/functions.js')
 def send_report():
     return send_from_directory('static', 'functions.js')
