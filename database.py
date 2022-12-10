@@ -57,7 +57,7 @@ def pullStatus():
 def murder():
     db.dropDatabase()
 
-#Sanitizes a LIST of dictionaries, removing the aids mongo _id from everything
+#Sanitizes a LIST of dictionaries, removing the mongo _id from everything
 def process(diseaseBoat):
     #If there ain't shit to process, return nothing
     if diseaseBoat == []:
@@ -70,7 +70,7 @@ def process(diseaseBoat):
             cleanShip.append(clean)
         return cleanShip
 
-#Deletes the stupid AIDS Mongo _id from ANY ONE dictionary
+#Deletes the stupid Mongo _id from ANY ONE dictionary
 def sanitize(diseased):
     cured = {}
     for key in diseased.keys():
@@ -138,7 +138,7 @@ def newAccount(username, password):
     player = sanitize(list(publicPlayers.find({"id" : cur}))[0])
     #Updates the ID to the next value
     ids.update_one({"current" : cur}, {"$set" : {"current" : cur+1}})
-    #Returns the newly created entry without AIDS _id
+    #Returns the newly created entry without _id
     return player
 
 #Returns True if the account is deleted
@@ -207,7 +207,7 @@ def findAvailableGame():
     lobbies = list(games.find({}))
     #For every lobby see if it is available
     for lobby in lobbies:
-        #Pull the keys (should be '1-8' or AIDS _id)
+        #Pull the keys (should be '1-8' or _id)
         lobby = sanitize(lobby)
         if lobby["contents"] == 0:
             return lobby["id"]
@@ -305,7 +305,7 @@ def delXSRFToken(username):
     #If there are no tokens associated iwth a username, return False as no deletion occured
     if tokens == []:
         return False
-    #Remove the _aids id
+    #Remove the id
     tokens = process(tokens)
     #For every token associated with the username
     for token in tokens:
@@ -322,7 +322,7 @@ def rankByWins(username):
     if userProfile == []:
         return -1
     userProfile = sanitize(userProfile[0])
-    #Otherwise, pull all profiles and process them, removing the aids _id in the process
+    #Otherwise, pull all profiles and process them, removing the _id in the process
     allProfiles = process(list(publicPlayers.find({})))
     #Initialize a "Set" containing one value for the number of game wins for every user in the database.
     winRanking = [0]
@@ -350,7 +350,7 @@ def rankByCash(username):
     if userProfile == []:
         return -1
     userProfile = sanitize(userProfile[0])
-    #Otherwise, pull all profiles and process them, removing the aids _id in the process
+    #Otherwise, pull all profiles and process them, removing the _id in the process
     allProfiles = process(list(publicPlayers.find({})))
     #Initialize a "Set" containing one value for the money for every user in the database.
     moneyRanking = [0.0]

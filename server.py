@@ -4,14 +4,11 @@
 from flask import Flask, request, render_template, render_template_string, send_from_directory, redirect, make_response
 from flask_sock import Sock
 from markupsafe import escape
-import sys
 import database
 import templator
 import jack
-import time
 import json
 import random
-import html
 
 app = Flask(__name__, static_folder="./static/functions.js")
 sock = Sock(app)
