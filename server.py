@@ -9,6 +9,8 @@ import templator
 import jack
 import json
 import random
+import html
+import os
 
 app = Flask(__name__, static_folder="./static/functions.js")
 sock = Sock(app)
@@ -192,7 +194,7 @@ def check_connection():
 @sock.route('/websocket') # can be dynamically changed
 def echo(ws): 
     username = database.authAuthCookie(str(escape(request.cookies.get('auth'))))
-    while ws.connected: 
+    while True: 
         data = ws.receive(timeout=0)
         if not data:
             continue

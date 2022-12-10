@@ -6,6 +6,7 @@ if (window.location.protocol === "http:") {
 }
 
 const socket = new WebSocket(test + "://" + location.host + '/websocket');
+
 // const socket = new WebSocket(wsProtocol + "://" + location.host + "/websocket/{{ username }}");
 console.log("HOST:" + window.location.host)
 console.log("WINDOW: " + test + "://" + window.location.host + '/websocket')
@@ -46,6 +47,8 @@ socket.onmessage = function(ws_message) {
             DisplayBoard(message);
             break;
     }
+
+    return false;
 }
 
 // Renders a new chat message to the page
@@ -67,6 +70,7 @@ function reflectConnections(users) { // user is a javascript map/dictionary
     else if (users.user_count <= count) {
         game_board.innerHTML = "<b>" + "Waiting for enough players..." + "</b>"
     }
+    return false;
 }
 
 // Renders a new board
@@ -78,10 +82,11 @@ function DisplayBoard(new_board) {
 socket.onopen = function(event) {
     console.log("Client connected!");
     socket.send(JSON.stringify({'socketMessage': "connected"}));
+    return false;
 }
 
 socket.onclose = function(event) {
-    console.log("Client connected!");
+    console.log("Client disconnected!");
     socket.send(JSON.stringify({'socketMessage': "close"}));
 }
 
@@ -92,24 +97,29 @@ window.addEventListener("beforeunload", function(event) {
 // Handle any errors that occur.
 socket.onerror = function(error) {
     console.log('WebSocket Error: ' + error);
+    return false;
 };
 
 //User pressed roll
 function roll() {
     socket.send((JSON.stringify({'button_type': 'roll'})));
+    return false;
 }
 
 //User wants to buy current property
 function buy() {
     socket.send((JSON.stringify({'button_type': 'buy'})));
+    return false;
 }
 
 //User does NOT want to buy current property
 function pass() {
     socket.send((JSON.stringify({'button_type': 'pass'})));
+    return false;
 }
 
 //User wants to leave game (i.e. remove their websocket connection quietly)
 function leave() {
+    console.log("Client disconnecting!");
     socket.close()
 }

@@ -26,4 +26,5 @@ RUN chmod +x /wait
 
 # command for running the application in container
 CMD /wait && python3 -u server.py
+#CMD [/wait && python3 -u server.py, gunicorn -b :5000 --workers 4 --threads 100 module:app]
 
