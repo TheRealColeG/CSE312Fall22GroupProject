@@ -67,10 +67,11 @@ def lookup():
     #if the user is looking up THEIR OWN LOGGED IN PROFILE
     else:
         #Pull the cookie
-        authCookie = str(escape(request.cookies.get('auth')))
+        authCookie = str(request.cookies.get('auth'))
         #Auth the cookie and gain the username
-        username = database.authAuthCookie(str(authCookie))
+        username = database.authAuthCookie(authCookie)
         print("the username: "+str(username), flush=True)
+        print("the authcookie is: "+authCookie, flush=True)
         if username != False:
             html = templator.servePrivateUserProfileHTML(username)
             return html
@@ -105,7 +106,11 @@ def login():
 
 @app.route('/wipe', methods=['GET'])
 def wipe():
-    return redirect('/login', 301)
+    res = make_response(f"Cookie Deleted.")
+    res.set_cookie("auth", "0", 1)
+    res.location = '/'
+    res.status_code = 301
+    return res
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -133,7 +138,6 @@ def pullLeaderboard():
         return render_template("leaderboardunavailable.html")
     else:
         return template
-
 
 @app.route('/functions.js')
 def send_report():

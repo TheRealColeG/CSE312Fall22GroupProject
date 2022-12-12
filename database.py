@@ -54,9 +54,6 @@ if "identification" not in db.list_collection_names():
 def pullStatus():
     return sanitize(list(status.find({}))[0])["status"]
 
-def murder():
-    db.dropDatabase()
-
 #Sanitizes a LIST of dictionaries, removing the mongo _id from everything
 def process(diseaseBoat):
     #If there ain't shit to process, return nothing
@@ -243,7 +240,7 @@ def genAuthCookie(username):
     #Return the authenticated plaintext cookie
     return cookie
 
-#Returns a True if the authentication XSRF cookie is authenticated, a False if it is not.
+#Returns a username if the authentication XSRF cookie is authenticated, a False if it is not.
 def authAuthCookie(cookie):
     retrieveCookie = list(authCookies.find({"cookie" : hashlib.sha256(cookie.encode('utf-8')).hexdigest()}))
     #If there is not existing cookie by that id:
@@ -251,7 +248,7 @@ def authAuthCookie(cookie):
         #Return false as the authentication failed.
         return False
     #Return the username associated with the cookie
-    return sanitize(retrieveCookie[0])["username"]
+    return retrieveCookie[0]["username"]
 
 #Return True if the cookie was deleted, return False otherwise
 def delAuthCookie(cookie):
