@@ -31,7 +31,6 @@ def hello_world():
 # Example of escaping user input - no injection
 
 
-#This doesn't work.
 @app.route("/change-password", methods=['POST'])
 def change_password():
     #Authenticate
