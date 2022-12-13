@@ -164,14 +164,3 @@ def serveLeaderboardHTML():
 
     ret_val = ret_val + '</table>\n<br>\n<br>\n</div>\n</div>\n</div>\n</div>\n</div>\n<footer class="container-fluid text-center">\n<p>Developed by Julius Merlino, Cole Grabenstatter, Buu Lam, Ziqian Yang, Songzhu Li for the Final Project in CSE312 with Dr. Jesse Hartloff</p>\n</footer>\n</body>\n</html>'
     return ret_val 
-"""  
-if __name__ == "__main__":
-    game = api.initGame(["Julius", "Edward", "Merlino"])
-    #game = api.move(game, game["players"][1], 1)
-    obj = api.initBoard()
-    obj = computeBoard(obj)
-    html = printer(obj, game)
-    file = open("delete.html", 'w')
-    file.write(html)
-    file.close()
-"""
