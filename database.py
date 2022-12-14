@@ -52,7 +52,7 @@ if "identification" not in db.list_collection_names():
 
 #Returns true if accounts exist, false otherwise.
 def pullStatus():
-    return sanitize(list(status.find({}))[0])["status"]
+    return list(status.find({}))[0]["status"]
 
 #Sanitizes a LIST of dictionaries, removing the mongo _id from everything
 def process(diseaseBoat):
